@@ -1,0 +1,18 @@
+cmake_minimum_required(VERSION 3.20)
+
+project(Textenstein C)
+
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+
+add_executable(textenstein
+    src/main.c
+)
+
+target_include_directories(textenstein PRIVATE include)
+
+if (MSVC)
+    target_compile_options(textenstein PRIVATE /W4)
+else()
+    target_compile_options(textenstein PRIVATE -Wall -Wextra -Wpedantic)
+endif()

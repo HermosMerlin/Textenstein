@@ -1,4 +1,7 @@
 # Local agent workspace and notes
 docx/
+build/
 AGENTS.md
 agents.md
+.cache/
+.vscode/
