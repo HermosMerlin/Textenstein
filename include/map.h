@@ -4,7 +4,7 @@
 typedef struct {
     int height;
     int width;
-    char tiles[MAX_HEIGHT][MAX_WIDTH + 1];
+    char tiles[MAP_MAX_HEIGHT][MAP_MAX_WIDTH + 1];
 } Map;
 
 int map_load(Map* map, const char* filename);

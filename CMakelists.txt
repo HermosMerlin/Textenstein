@@ -9,6 +9,8 @@ add_executable(textenstein
     src/main.c
     src/map.c
     src/input.c
+    src/player.c
+    src/motion.c
 )
 
 target_include_directories(textenstein PRIVATE include)

@@ -12,6 +12,6 @@ typedef struct {
 } InputState;
 
 void input_poll(InputState* input);
-void input_test();
+void input_test(InputState* input);
 
 #endif

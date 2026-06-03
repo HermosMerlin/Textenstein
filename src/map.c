@@ -5,7 +5,7 @@
 int map_load(Map* map, const char* filename) {
     FILE* file = fopen(filename, "r");
 
-    char line[MAX_WIDTH + 2];
+    char line[MAP_MAX_WIDTH + 2];
 
     if (file == NULL) {
         perror(filename);
@@ -15,11 +15,11 @@ int map_load(Map* map, const char* filename) {
     map->height = 0;
     map->width = 0;
 
-    while (map->height < MAX_HEIGHT && fgets(line, sizeof(line), file) != NULL) {
+    while (map->height < MAP_MAX_HEIGHT && fgets(line, sizeof(line), file) != NULL) {
         size_t len = strcspn(line, "\r\n");
 
-        if ((int)len > MAX_WIDTH) {
-            len = MAX_WIDTH;
+        if ((int)len > MAP_MAX_WIDTH) {
+            len = MAP_MAX_WIDTH;
         }
 
         memcpy(map->tiles[map->height], line, len);
