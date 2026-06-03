@@ -2,14 +2,14 @@
 #include <stdio.h>
 #include <string.h>
 
-void load_map(Map* map, const char* filename) {
+int map_load(Map* map, const char* filename) {
     FILE* file = fopen(filename, "r");
 
     char line[MAX_WIDTH + 2];
 
     if (file == NULL) {
         perror(filename);
-        return;
+        return 0;
     }
 
     map->height = 0;
@@ -33,15 +33,26 @@ void load_map(Map* map, const char* filename) {
     }
 
     fclose(file);
+    return 1;
 }
+
 void map_print(const Map* map) {
     for (int i = 0; i < map->height; i++) {
         for (int j = 0; j < map->width; j++) {
-            printf("%c",map->tiles[i][j]);
+            printf("%c", map->tiles[i][j]);
         }
         printf("\n");
     }
 }
-int is_wall(const Map* map, int x, int y) {
+
+int map_is_overbound(const Map* map, int x, int y) {
+    if (x < 0 || x >= map->width || y < 0 || y >= map->height)
+        return 1;
+    return 0;
+}
+
+int map_is_wall(const Map* map, int x, int y) {
+    if (map_is_overbound(map, x, y))
+        return 1;
     return (map->tiles[y][x] == '#');
 }

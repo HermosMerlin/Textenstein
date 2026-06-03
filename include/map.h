@@ -7,8 +7,9 @@ typedef struct {
     char tiles[MAX_HEIGHT][MAX_WIDTH + 1];
 } Map;
 
-void load_map(Map* map, const char* filename);
+int map_load(Map* map, const char* filename);
 void map_print(const Map* map);
-int is_wall(const Map* map, int x, int y);
+int map_is_overbound(const Map* map,int x,int y);
+int map_is_wall(const Map* map, int x, int y);
 
 #endif
