@@ -1,5 +1,7 @@
 #include <stdio.h>
+#include <windows.h>
 #include "map.h"
+#include "input.h"
 int main(void) {
     printf("Textenstein started\n");
     Map map;
@@ -10,6 +12,8 @@ int main(void) {
     }
     else
         printf("Failed to load map\n");
+
+    input_test();
 
     return 0;
 }
