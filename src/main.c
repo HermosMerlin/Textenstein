@@ -19,20 +19,19 @@ int main(void) {
     InputState input;
     Motion motion;
     Player player;
-     motion_init(&motion, &input);
-    player_init(&player,&motion, 0, 0);
-   
+    motion_init(&motion, &input);
+    player_init(&player, &motion, 2, 2);
 
     while (1) {
         input_poll(&input);
 
-        player_update(&player, &motion);
+        player_update(&player, &motion, &map);
         player_printf(&player);
 
         if (input.quit) {
             break;
         }
-        Sleep(100);
+        Sleep(delta_t * 1000);
     }
 
     return 0;

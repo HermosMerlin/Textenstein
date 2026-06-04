@@ -2,8 +2,8 @@
 
 void motion_init(Motion* motion, InputState* input) {
     motion->input = input;
-    motion->move_speed = 1;
-    motion->turn_speed = 0.08;
+    motion->move_speed = 5;
+    motion->turn_speed = 5;
 }
 
 void motion_update_dir(Motion* motion) {

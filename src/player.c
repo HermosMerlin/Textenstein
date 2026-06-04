@@ -11,7 +11,7 @@ void player_init(Player* player, Motion* motion, double x, double y) {
     player->motion = motion;
 }
 
-void player_update(Player* player, Motion* motion) {
+void player_update(Player* player, Motion* motion, const Map* map) {
     //update position
     motion_update_dir(motion);
 
@@ -20,15 +20,27 @@ void player_update(Player* player, Motion* motion) {
 
     Vec2d local = motion_get_move(motion);
 
-    Vec2d move = {
-      local.y * forward.x + local.x * right.x,
-      local.y * forward.y + local.x * right.y};
+    Vec2d move = vec2d_scale((Vec2d){
+                               local.y * forward.x + local.x * right.x,
+                               local.y * forward.y + local.x * right.y},
+      delta_t);
 
-    player->x += move.x;
-    player->y += move.y;
+    double next_x = player->x + move.x;
+    double next_y = player->y + move.y;
+    int x_access = 0, y_access = 0;
+
+    if (!map_is_wall(map, (int)next_x, (int)player->y))
+        x_access = 1;
+    if (!map_is_wall(map, (int)player->x, (int)next_y))
+        y_access = 1;
+
+    if (x_access)
+        player->x = next_x;
+    if (y_access)
+        player->y = next_y;
 
     //update direction
-    player->angle += motion->turn_speed * motion->turn_dir;
+    player->angle += motion->turn_speed * motion->turn_dir * delta_t;
     if (player->angle > TAU)
         player->angle -= TAU;
     if (player->angle < 0)

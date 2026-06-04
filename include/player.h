@@ -2,6 +2,7 @@
 #define PLAYER_H
 
 #include "motion.h"
+#include "map.h"
 typedef struct {
     double x;
     double y;
@@ -10,6 +11,6 @@ typedef struct {
 } Player;
 
 void player_init(Player* player, Motion* motion, double x, double y);
-void player_update(Player* player, Motion* motion);
+void player_update(Player* player, Motion* motion, const Map* map);
 void player_printf(Player* player);
 #endif
