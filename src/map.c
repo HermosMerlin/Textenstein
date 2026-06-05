@@ -40,7 +40,8 @@ int map_load(Map* map, const char* filename) {
         for (int j = 0; j < map->width; j++) {
             if (map->tiles[i][j] == 'P') {
                 map->player_init_x = (double)j + 0.5;
-                map->player_init_y = (double)i +0.5;
+                map->player_init_y = (double)i + 0.5;
+                map->tiles[i][j] = '.';
             }
         }
     }

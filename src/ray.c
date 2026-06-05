@@ -20,5 +20,8 @@ RayHit ray_check(const Map* map, double x, double y, double angle, double max_di
             break;
         }
     }
+    if (ray.hit == 0) {
+        ray.distance = max_distance;
+    }
     return ray;
 }
