@@ -3,14 +3,15 @@
 #include <string.h>
 
 int map_load(Map* map, const char* filename) {
-    FILE* file = fopen(filename, "r");
+    FILE* file = NULL;
+    errno_t err = fopen_s(&file, filename, "r");
 
-    char line[MAP_MAX_WIDTH + 2];
-
-    if (file == NULL) {
+    if (err != 0 || file == NULL) {
         perror(filename);
         return 0;
     }
+
+    char line[MAP_MAX_WIDTH + 2];
 
     map->height = 0;
     map->width = 0;
@@ -33,6 +34,20 @@ int map_load(Map* map, const char* filename) {
     }
 
     fclose(file);
+
+    map->player_init_x = -1;
+    for (int i = 0; i < map->height; i++) {
+        for (int j = 0; j < map->width; j++) {
+            if (map->tiles[i][j] == 'P') {
+                map->player_init_x = (double)j + 0.5;
+                map->player_init_y = (double)i +0.5;
+            }
+        }
+    }
+
+    if (map->player_init_x == -1)
+        return 0;
+
     return 1;
 }
 
@@ -57,10 +72,10 @@ int map_is_wall(const Map* map, int x, int y) {
     return (map->tiles[y][x] == '#');
 }
 
-// int map_in_wall(const Map* map, double x, double y) {
-//     if (x < 0 || x > (double)(MAP_MAX_WIDTH - 1) || y < 0 || y > (double)(MAP_MAX_HEIGHT - 1))
-//         return 1;
-//     if (map_is_wall(map, (int)x, (int)y))
-//         return 1;
-// return 0;
-// }
+int map_in_wall(const Map* map, double x, double y) {
+    if (x < 0 || x > (double)(MAP_MAX_WIDTH - 1) || y < 0 || y > (double)(MAP_MAX_HEIGHT - 1))
+        return 1;
+    if (map_is_wall(map, (int)x, (int)y))
+        return 1;
+    return 0;
+}

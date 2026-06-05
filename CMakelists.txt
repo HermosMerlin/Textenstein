@@ -11,6 +11,7 @@ add_executable(textenstein
     src/input.c
     src/player.c
     src/motion.c
+    src/ray.c
 )
 
 target_include_directories(textenstein PRIVATE include)
