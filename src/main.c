@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <windows.h>
+#include "config.h"
 #include "map.h"
 #include "input.h"
 #include "player.h"
@@ -33,7 +34,7 @@ int main(void) {
         player_printf(&player);
 
         RayHit ray_t;
-        ray_t = ray_check_dda(&map, player.x, player.y, player.angle, 20);
+        ray_t = ray_check_dda(&map, player.x, player.y, player.angle, MAX_VIEW_DISTANCE);
         if (ray_t.hit)
             printf("hit:(%lf,%lf)  (%d,%d)\n\n", ray_t.hit_x, ray_t.hit_y, ray_t.map_x, ray_t.map_y);
         else
@@ -42,7 +43,7 @@ int main(void) {
         if (input.quit) {
             break;
         }
-        Sleep(delta_t * 1000);
+        Sleep((DWORD)(FIXED_DELTA_TIME * 1000.0));
     }
 
     return 0;

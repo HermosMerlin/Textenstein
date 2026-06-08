@@ -23,7 +23,7 @@ void player_update(Player* player, Motion* motion, const Map* map) {
     Vec2d move = vec2d_scale((Vec2d){
                                local.y * forward.x + local.x * right.x,
                                local.y * forward.y + local.x * right.y},
-      delta_t);
+      FIXED_DELTA_TIME);
 
     double next_x = player->x + move.x;
     double next_y = player->y + move.y;
@@ -40,7 +40,7 @@ void player_update(Player* player, Motion* motion, const Map* map) {
         player->y = next_y;
 
     //update direction
-    player->angle += motion->turn_speed * motion->turn_dir * delta_t;
+    player->angle += motion->turn_speed * motion->turn_dir * FIXED_DELTA_TIME;
     if (player->angle > TAU)
         player->angle -= TAU;
     if (player->angle < 0)

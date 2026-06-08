@@ -1,9 +1,10 @@
 #include "motion.h"
+#include "config.h"
 
 void motion_init(Motion* motion, InputState* input) {
     motion->input = input;
-    motion->move_speed = 5;
-    motion->turn_speed = 5;
+    motion->move_speed = PLAYER_MOVE_SPEED;
+    motion->turn_speed = PLAYER_TURN_SPEED;
 }
 
 void motion_update_dir(Motion* motion) {

@@ -3,12 +3,22 @@
 
 enum {
     MAP_MAX_HEIGHT = 128,
-    MAP_MAX_WIDTH = 128
+    MAP_MAX_WIDTH = 128,
+
+    SCREEN_WIDTH = 80,
+    SCREEN_HEIGHT = 24
 };
 
 #define PI 3.14159265358979323846
 #define TAU 6.28318530717958647692
-#define fps 60.0
-#define delta_t (double)(1.0/fps)
+
+#define FOV (PI / 2.0)
+#define MAX_VIEW_DISTANCE 20.0
+
+#define GAME_FPS 60.0
+#define FIXED_DELTA_TIME (1.0 / GAME_FPS)
+
+#define PLAYER_MOVE_SPEED 5.0
+#define PLAYER_TURN_SPEED 5.0
 
 #endif
