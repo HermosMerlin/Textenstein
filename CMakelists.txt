@@ -13,6 +13,7 @@ add_executable(textenstein
     src/motion.c
     src/ray.c
     src/renderer.c
+    src/console.c
     
 )
 
