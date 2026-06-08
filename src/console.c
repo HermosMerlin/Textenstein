@@ -1,5 +1,6 @@
 #include "console.h"
 
+#include <stdio.h>
 #include <windows.h>
 
 void console_init(int cols, int rows) {
@@ -17,6 +18,12 @@ void console_init(int cols, int rows) {
 
     SetConsoleOutputCP(CP_UTF8);
     SetConsoleCP(CP_UTF8);
+
+    DWORD mode = 0;
+    if (GetConsoleMode(output, &mode)) {
+        mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+        SetConsoleMode(output, mode);
+    }
 
     CONSOLE_SCREEN_BUFFER_INFO info;
     if (GetConsoleScreenBufferInfo(output, &info)) {
@@ -45,35 +52,15 @@ void console_init(int cols, int rows) {
 
     SetConsoleScreenBufferSize(output, buffer_size);
     SetConsoleWindowInfo(output, TRUE, &window_rect);
-    SetConsoleCursorPosition(output, (COORD){0, 0});
+    console_move_home();
 }
 
 void console_clear(void) {
-    HANDLE output = GetStdHandle(STD_OUTPUT_HANDLE);
-    if (output == INVALID_HANDLE_VALUE) {
-        return;
-    }
-
-    CONSOLE_SCREEN_BUFFER_INFO info;
-    if (!GetConsoleScreenBufferInfo(output, &info)) {
-        return;
-    }
-
-    DWORD cell_count = (DWORD)info.dwSize.X * (DWORD)info.dwSize.Y;
-    DWORD written = 0;
-    COORD home = {0, 0};
-
-    FillConsoleOutputCharacterA(output, ' ', cell_count, home, &written);
-    FillConsoleOutputAttribute(output, info.wAttributes, cell_count, home, &written);
-    SetConsoleCursorPosition(output, home);
+    printf("\x1b[2J\x1b[H");
+    fflush(stdout);
 }
 
 void console_move_home(void) {
-    HANDLE output = GetStdHandle(STD_OUTPUT_HANDLE);
-    if (output == INVALID_HANDLE_VALUE) {
-        return;
-    }
-
-    COORD home = {0, 0};
-    SetConsoleCursorPosition(output, home);
+    printf("\x1b[H");
+    fflush(stdout);
 }
