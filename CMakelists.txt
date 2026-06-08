@@ -16,8 +16,30 @@ add_executable(textenstein
 
 target_include_directories(textenstein PRIVATE include)
 
+if (WIN32)
+    target_link_libraries(textenstein PRIVATE user32)
+endif()
+
 if (MSVC)
     target_compile_options(textenstein PRIVATE /W4)
 else()
     target_compile_options(textenstein PRIVATE -Wall -Wextra -Wpedantic)
 endif()
+
+enable_testing()
+
+add_executable(test_ray
+    test/test_ray.c
+    src/map.c
+    src/ray.c
+)
+
+target_include_directories(test_ray PRIVATE include)
+
+if (MSVC)
+    target_compile_options(test_ray PRIVATE /W4)
+else()
+    target_compile_options(test_ray PRIVATE -Wall -Wextra -Wpedantic)
+endif()
+
+add_test(NAME ray COMMAND test_ray)

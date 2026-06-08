@@ -2,6 +2,7 @@
 docx/
 build/
 AGENTS.md
+agent.md
 agents.md
 .cache/
 .vscode/

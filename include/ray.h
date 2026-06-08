@@ -13,6 +13,16 @@ typedef struct {
     int map_y;
 } RayHit;
 
-RayHit ray_check(const Map* map, double x, double y, double angle, double max_distance);
+RayHit ray_check(
+  const Map* map,
+  double x, double y,
+  double angle,
+  double max_distance);
+
+RayHit ray_check_dda(
+  const Map* map,
+  double x, double y,
+  double angle,
+  double max_distance);
 
 #endif
