@@ -7,14 +7,17 @@
 #include "motion.h"
 #include "ray.h"
 #include "renderer.h"
+#include "console.h"
 
 int main(void) {
-    printf("Textenstein started\n");
+    console_init(SCREEN_WIDTH, SCREEN_HEIGHT);
+    // printf("Textenstein started\n");
+
     Map map;
 
-    if (map_load(&map, "../assets/default_map.txt")) {
-        printf("Loaded map\n");
-        map_print(&map);
+    if (map_load(&map, "../assets/complex_map.txt")) {
+        // printf("Loaded map\n");
+        // map_print(&map);
     }
     else {
         printf("Failed to load map\n");
@@ -28,11 +31,12 @@ int main(void) {
     motion_init(&motion, &input);
     player_init(&player, &motion, map.player_init_x, map.player_init_y);
 
+    console_clear();
     while (1) {
         input_poll(&input);
 
         player_update(&player, &motion, &map);
-        player_printf(&player);
+        // player_printf(&player);
 
         // RayHit ray_t;
         // ray_t = ray_check_dda(&map, player.x, player.y, player.angle, MAX_VIEW_DISTANCE);
@@ -40,7 +44,10 @@ int main(void) {
         //     printf("hit:(%lf,%lf)  (%d,%d)\n\n", ray_t.hit_x, ray_t.hit_y, ray_t.map_x, ray_t.map_y);
         // else
         //     printf("not hit\n");
-        renderer_windowcolumn_debug(&map,player.x,player.y,player.angle);
+
+        // renderer_windowcolumn_debug(&map, player.x, player.y, player.angle);
+
+        renderer_render_frame(&map,player.x,player.y,player.angle);
 
         if (input.quit) {
             break;
