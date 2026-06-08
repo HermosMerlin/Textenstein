@@ -1,7 +1,10 @@
 #include "console.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <windows.h>
+
+static int vt_enabled = 0;
 
 void console_init(int cols, int rows) {
     HANDLE output = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -22,7 +25,7 @@ void console_init(int cols, int rows) {
     DWORD mode = 0;
     if (GetConsoleMode(output, &mode)) {
         mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-        SetConsoleMode(output, mode);
+        vt_enabled = SetConsoleMode(output, mode) != 0;
     }
 
     CONSOLE_SCREEN_BUFFER_INFO info;
@@ -53,14 +56,61 @@ void console_init(int cols, int rows) {
     SetConsoleScreenBufferSize(output, buffer_size);
     SetConsoleWindowInfo(output, TRUE, &window_rect);
     console_move_home();
+    console_hide_cursor();
 }
 
 void console_clear(void) {
-    printf("\x1b[2J\x1b[H");
-    fflush(stdout);
+    if (vt_enabled) {
+        printf("\x1b[2J\x1b[H");
+        fflush(stdout);
+    }
+    else {
+        system("cls");
+    }
 }
 
 void console_move_home(void) {
-    printf("\x1b[H");
-    fflush(stdout);
+    if (vt_enabled) {
+        printf("\x1b[H");
+        fflush(stdout);
+    }
+    else {
+        HANDLE output = GetStdHandle(STD_OUTPUT_HANDLE);
+        if (output == INVALID_HANDLE_VALUE) {
+            return;
+        }
+        SetConsoleCursorPosition(output, (COORD){0, 0});
+    }
+}
+
+void console_hide_cursor(void) {
+    if (vt_enabled) {
+        printf("\x1b[?25l");
+        fflush(stdout);
+    }
+    else {
+        HANDLE output = GetStdHandle(STD_OUTPUT_HANDLE);
+        CONSOLE_CURSOR_INFO cursor_info;
+        if (output == INVALID_HANDLE_VALUE || !GetConsoleCursorInfo(output, &cursor_info)) {
+            return;
+        }
+        cursor_info.bVisible = FALSE;
+        SetConsoleCursorInfo(output, &cursor_info);
+    }
+}
+
+void console_show_cursor(void) {
+    if (vt_enabled) {
+        printf("\x1b[?25h");
+        fflush(stdout);
+    }
+    else {
+        HANDLE output = GetStdHandle(STD_OUTPUT_HANDLE);
+        CONSOLE_CURSOR_INFO cursor_info;
+        if (output == INVALID_HANDLE_VALUE || !GetConsoleCursorInfo(output, &cursor_info)) {
+            return;
+        }
+        cursor_info.bVisible = TRUE;
+        SetConsoleCursorInfo(output, &cursor_info);
+    }
 }

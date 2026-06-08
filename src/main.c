@@ -55,5 +55,6 @@ int main(void) {
         Sleep((DWORD)(FIXED_DELTA_TIME * 1000.0));
     }
 
+    console_show_cursor();
     return 0;
 }

@@ -4,7 +4,6 @@
 #include "console.h"
 #include <math.h>
 #include <stdio.h>
-#include <stdlib.h>
 
 void renderer_windowcolumn_debug(const Map* map, double x, double y, double player_angle) {
     RayHit result;
@@ -91,8 +90,10 @@ void renderer_render_frame(const Map* map, double x, double y, double player_ang
     }
 
     //输出到屏幕
-    system("cls");
-    for (int row = 0; row < SCREEN_HEIGHT; row++) {
+    console_move_home();
+    for (int row = 0; row < SCREEN_HEIGHT - 1; row++) {
         printf("%s\n", buffer[row]);
     }
+    printf("%s", buffer[SCREEN_HEIGHT - 1]);
+    fflush(stdout);
 }
