@@ -6,6 +6,7 @@
 #include "player.h"
 #include "motion.h"
 #include "ray.h"
+#include "renderer.h"
 
 int main(void) {
     printf("Textenstein started\n");
@@ -33,12 +34,13 @@ int main(void) {
         player_update(&player, &motion, &map);
         player_printf(&player);
 
-        RayHit ray_t;
-        ray_t = ray_check_dda(&map, player.x, player.y, player.angle, MAX_VIEW_DISTANCE);
-        if (ray_t.hit)
-            printf("hit:(%lf,%lf)  (%d,%d)\n\n", ray_t.hit_x, ray_t.hit_y, ray_t.map_x, ray_t.map_y);
-        else
-            printf("not hit\n");
+        // RayHit ray_t;
+        // ray_t = ray_check_dda(&map, player.x, player.y, player.angle, MAX_VIEW_DISTANCE);
+        // if (ray_t.hit)
+        //     printf("hit:(%lf,%lf)  (%d,%d)\n\n", ray_t.hit_x, ray_t.hit_y, ray_t.map_x, ray_t.map_y);
+        // else
+        //     printf("not hit\n");
+        renderer_windowcolumn_debug(&map,player.x,player.y,player.angle);
 
         if (input.quit) {
             break;
