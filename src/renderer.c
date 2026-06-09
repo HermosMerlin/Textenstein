@@ -34,6 +34,18 @@ void renderer_windowcolumn_debug(const Map* map, double x, double y, double play
     }
 }
 
+char get_wall_char_by_distance(double distance) {
+    if (distance < 1.0)
+        return '@';
+    if (distance < 2.0)
+        return '#';
+    if (distance < 3.0)
+        return 'O';
+    if (distance < 5.0)
+        return '+';
+    return '*';
+}
+
 void renderer_render_frame(const Map* map, double x, double y, double player_angle) {
     char buffer[SCREEN_HEIGHT][SCREEN_WIDTH + 1];
 
@@ -84,7 +96,7 @@ void renderer_render_frame(const Map* map, double x, double y, double player_ang
 
             //将墙面填充入frame
             for (int screen_y = wall_top; screen_y <= wall_bottom; screen_y++) {
-                buffer[screen_y][screen_col] = '#';
+                buffer[screen_y][screen_col] = get_wall_char_by_distance(corrected_distance);
             }
         }
     }
