@@ -34,26 +34,27 @@ void renderer_windowcolumn_debug(const Map* map, double x, double y, double play
     }
 }
 
-char get_wall_char_by_distance(double distance, double hit_angle) {
+char get_wall_char_by_brightness(double distance, double hit_angle, int screen_x, int screen_y) {
     //综合角度和距离计算光照强度
     double angle_factor = 0.2 + 0.8 * pow((1.0 - fabs(hit_angle / (PI / 2.0))), 2.5);
-    double bright = 1.0 / (pow(distance, 1.2)) * angle_factor;
+    double bright = 1.0 / (pow((distance + 1) / MAX_VIEW_DISTANCE * 4, 1.2)) * angle_factor;
 
-    if (bright > 0.8)
-        return '@';
-    if (bright > 0.5)
-        return '#';
-    if (bright > 0.4)
-        return 'P';
-    if (bright > 0.3)
-        return 'O';
-    if (bright > 0.2)
-        return 'o';
-    if (bright > 0.1)
-        return 'c';
-    if (bright > 0.05)
-        return ':';
-    return '.';
+    //抖动 dithering
+    int bayer[4][4] = {
+      {0, 8, 2, 10},
+      {12, 4, 14, 6},
+      {3, 11, 1, 9},
+      {15, 7, 13, 5}};
+
+    double value = bright * 7.0;
+    int index = (int)value;
+    double frac = value - index;
+    double threshold = bayer[screen_y % 4][screen_x % 4] / 16.0;
+
+    if (frac > threshold)
+        index++;
+
+    return WALL_SHADE_CHARS[index];
 }
 
 char get_floor_char_by_row(int row) {
@@ -73,7 +74,6 @@ void renderer_render_frame(const Map* map, double x, double y, double player_ang
     //考虑最大视距，计算地面消失点
     double max_wall_height = (double)SCREEN_HEIGHT / MAX_VIEW_DISTANCE;
     int floor_top = (int)((SCREEN_HEIGHT / 2.0) + (max_wall_height / 2.0));
-
 
     //打印天空
     for (int i = 0; i < floor_top; i++) {
@@ -125,7 +125,7 @@ void renderer_render_frame(const Map* map, double x, double y, double player_ang
 
             //将墙面填充入frame
             for (int screen_y = wall_top; screen_y <= wall_bottom; screen_y++) {
-                buffer[screen_y][screen_col] = get_wall_char_by_distance(corrected_distance, result.hit_angle);
+                buffer[screen_y][screen_col] = get_wall_char_by_brightness(corrected_distance, result.hit_angle, screen_col, screen_y);
                 color_buffer[screen_y][screen_col] = 2;
             }
         }
@@ -133,13 +133,6 @@ void renderer_render_frame(const Map* map, double x, double y, double player_ang
 
     //输出到屏幕
     console_move_home();
-    // for (int row = 0; row < SCREEN_HEIGHT; row++) {
-    //     for (int col = 0; col < SCREEN_WIDTH; col++) {
-    //         console_set_color(color_buffer[row][col]);
-    //         printf("%c", buffer[row][col]);
-    //     }
-    //     printf("\n");
-    // }
     console_write_frame(buffer, color_buffer);
 
     fflush(stdout);
