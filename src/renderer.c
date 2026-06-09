@@ -77,7 +77,7 @@ char get_floor_char_by_row(int row) {
 
 void renderer_render_frame(const Map* map, double x, double y, double player_angle) {
     char buffer[SCREEN_HEIGHT][SCREEN_WIDTH + 1];
-    int color_buffer[SCREEN_HEIGHT][SCREEN_WIDTH];
+    ConsoleColor color_buffer[SCREEN_HEIGHT][SCREEN_WIDTH];
 
     //考虑最大视距，计算地面消失点
     double max_wall_height = (double)SCREEN_HEIGHT / MAX_VIEW_DISTANCE;
@@ -87,7 +87,7 @@ void renderer_render_frame(const Map* map, double x, double y, double player_ang
     for (int i = 0; i < floor_top; i++) {
         for (int j = 0; j < SCREEN_WIDTH; j++) {
             buffer[i][j] = ' ';
-            color_buffer[i][j] = 0;
+            color_buffer[i][j] = CONSOLE_COLOR_DEFAULT;
         }
         buffer[i][SCREEN_WIDTH] = '\0';
     }
@@ -97,7 +97,7 @@ void renderer_render_frame(const Map* map, double x, double y, double player_ang
     for (int i = floor_top; i < SCREEN_HEIGHT; i++) {
         for (int j = 0; j < SCREEN_WIDTH; j++) {
             buffer[i][j] = '.';
-            color_buffer[i][j] = 1;
+            color_buffer[i][j] = CONSOLE_COLOR_FLOOR;
         }
         buffer[i][SCREEN_WIDTH] = '\0';
     }
@@ -134,13 +134,12 @@ void renderer_render_frame(const Map* map, double x, double y, double player_ang
             //将墙面填充入frame
             for (int screen_y = wall_top; screen_y <= wall_bottom; screen_y++) {
                 buffer[screen_y][screen_col] = get_wall_char_by_brightness(corrected_distance, result.hit_angle, screen_col, screen_y);
-                color_buffer[screen_y][screen_col] = 2;
+                color_buffer[screen_y][screen_col] = CONSOLE_COLOR_WALL;
             }
         }
     }
 
     //输出到屏幕
-    console_move_home();
     console_write_frame(buffer, color_buffer);
 
     fflush(stdout);

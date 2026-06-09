@@ -13,6 +13,11 @@
 static int vt_enabled = 0;
 static WORD default_attributes = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
 
+static void console_move_home(void);
+static void console_hide_cursor(void);
+static void console_set_color(ConsoleColor color);
+static void console_reset_color(void);
+
 static const char* console_vt_color_code(ConsoleColor color) {
     switch (color) {
     case CONSOLE_COLOR_FLOOR:
@@ -103,7 +108,7 @@ void console_clear(void) {
     }
 }
 
-void console_move_home(void) {
+static void console_move_home(void) {
     if (vt_enabled) {
         printf("\x1b[H");
         fflush(stdout);
@@ -117,7 +122,7 @@ void console_move_home(void) {
     }
 }
 
-void console_hide_cursor(void) {
+static void console_hide_cursor(void) {
     if (vt_enabled) {
         printf("\x1b[?25l");
         fflush(stdout);
@@ -149,7 +154,7 @@ void console_show_cursor(void) {
     }
 }
 
-void console_set_color(ConsoleColor color) {
+static void console_set_color(ConsoleColor color) {
     if (vt_enabled) {
         printf("%s", console_vt_color_code(color));
     }
@@ -162,43 +167,26 @@ void console_set_color(ConsoleColor color) {
     }
 }
 
-void console_reset_color(void) {
+static void console_reset_color(void) {
     console_set_color(CONSOLE_COLOR_DEFAULT);
 }
 
-void console_write_colored_line(const char* text, const ConsoleColor* colors, int length, int newline) {
-    int start = 0;
-
-    while (start < length) {
-        ConsoleColor color = colors ? colors[start] : CONSOLE_COLOR_DEFAULT;
-        int end = start + 1;
-
-        while (end < length && (!colors || colors[end] == color)) {
-            end++;
-        }
-
-        console_set_color(color);
-        fwrite(text + start, 1, (size_t)(end - start), stdout);
-        start = end;
-    }
-
-    console_reset_color();
-    if (newline) {
-        putchar('\n');
-    }
-}
-
-void append_string(char* a,const char* b, int* pos,int max_size) {
+static void append_string(char* a, const char* b, int* pos, int max_size) {
     for (int i = 0; b[i] != '\0' && (*pos) < max_size; i++) {
         a[*pos] = b[i];
         (*pos)++;
     }
 }
 
-void console_write_frame(const char buffer[SCREEN_HEIGHT][SCREEN_WIDTH + 1],const int color_buffer[SCREEN_HEIGHT][SCREEN_WIDTH]) {
+void console_write_frame(
+    const char buffer[SCREEN_HEIGHT][SCREEN_WIDTH + 1],
+    const ConsoleColor color_buffer[SCREEN_HEIGHT][SCREEN_WIDTH]
+) {
     char frame[FRAME_MAX];
     int pos = 0;
-    int pre_color = 0;
+    ConsoleColor pre_color = CONSOLE_COLOR_DEFAULT;
+
+    console_move_home();
     for (int row = 0; row < SCREEN_HEIGHT; row++) {
         for (int col = 0; col < SCREEN_WIDTH; col++) {
             if (pre_color != color_buffer[row][col]) {
@@ -208,9 +196,13 @@ void console_write_frame(const char buffer[SCREEN_HEIGHT][SCREEN_WIDTH + 1],cons
             frame[pos] = buffer[row][col];
             pos++;
         }
-        frame[pos] = '\n';
-        pos++;
+        if (row < SCREEN_HEIGHT - 1) {
+            frame[pos] = '\n';
+            pos++;
+        }
     }
+    append_string(frame, console_vt_color_code(CONSOLE_COLOR_DEFAULT), &pos, FRAME_MAX);
     frame[pos] = '\0';
-    printf("%s",frame);
+    printf("%s", frame);
+    fflush(stdout);
 }
