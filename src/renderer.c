@@ -36,15 +36,15 @@ void renderer_windowcolumn_debug(const Map* map, double x, double y, double play
 
 char get_wall_char_by_distance(double distance, double hit_angle) {
     //综合角度和距离计算光照强度
-    double angle_factor = 0.2 + 0.8 * pow((1.0 - fabs(hit_angle / (PI / 2.0))), 2);
+    double angle_factor = 0.2 + 0.8 * pow((1.0 - fabs(hit_angle / (PI / 2.0))), 2.5);
     double bright = 1.0 / (pow(distance, 1.2)) * angle_factor;
 
-    if (bright > 0.7)
+    if (bright > 0.8)
         return '@';
     if (bright > 0.5)
         return '#';
     if (bright > 0.1)
-        return 'O';
+        return 'o';
     if (bright > 0.05)
         return '+';
     return '*';
