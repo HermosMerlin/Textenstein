@@ -39,17 +39,25 @@ char get_wall_char_by_brightness(double distance, double hit_angle, int screen_x
     double angle_factor = 0.2 + 0.8 * pow((1.0 - fabs(hit_angle / (PI / 2.0))), 2.5);
     double bright = 1.0 / (pow((distance + 1) / MAX_VIEW_DISTANCE * 4, 1.2)) * angle_factor;
 
-    //抖动 dithering
     int bayer[4][4] = {
       {0, 8, 2, 10},
       {12, 4, 14, 6},
       {3, 11, 1, 9},
       {15, 7, 13, 5}};
+    double threshold = bayer[screen_y % 4][screen_x % 4] / 16.0;
 
+    //远距离模糊墙面
+    if (distance > WALL_FADE_START_DISTANCE) {
+        double visibility = (distance - WALL_FADE_START_DISTANCE) / (MAX_VIEW_DISTANCE - WALL_FADE_START_DISTANCE);
+
+        if (visibility > threshold)
+            return ' ';
+    }
+
+    //抖动 dithering
     double value = bright * 7.0;
     int index = (int)value;
     double frac = value - index;
-    double threshold = bayer[screen_y % 4][screen_x % 4] / 16.0;
 
     if (frac > threshold)
         index++;
