@@ -13,7 +13,7 @@ enum {
 #define TAU 6.28318530717958647692
 
 #define FOV (PI / 2.0)
-#define MAX_VIEW_DISTANCE 5.5
+#define MAX_VIEW_DISTANCE 4
 
 #define GAME_FPS 60.0
 #define FIXED_DELTA_TIME (1.0 / GAME_FPS)

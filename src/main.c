@@ -11,7 +11,7 @@
 
 int main(void) {
     console_init(SCREEN_WIDTH, SCREEN_HEIGHT);
-    // printf("Textenstein started\n");
+    printf("Textenstein Loading...\n");
 
     Map map;
 
@@ -31,7 +31,9 @@ int main(void) {
     motion_init(&motion, &input);
     player_init(&player, &motion, map.player_init_x, map.player_init_y);
 
+    Sleep(5000);
     console_clear();
+
     while (1) {
         input_poll(&input);
 
@@ -47,7 +49,7 @@ int main(void) {
 
         // renderer_windowcolumn_debug(&map, player.x, player.y, player.angle);
 
-        renderer_render_frame(&map,player.x,player.y,player.angle);
+        renderer_render_frame(&map, player.x, player.y, player.angle);
 
         if (input.quit) {
             break;

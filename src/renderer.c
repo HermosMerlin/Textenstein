@@ -69,8 +69,14 @@ char get_floor_char_by_row(int row) {
 void renderer_render_frame(const Map* map, double x, double y, double player_angle) {
     char buffer[SCREEN_HEIGHT][SCREEN_WIDTH + 1];
     int color_buffer[SCREEN_HEIGHT][SCREEN_WIDTH];
+
+    //考虑最大视距，计算地面消失点
+    double max_wall_height = (double)SCREEN_HEIGHT / MAX_VIEW_DISTANCE;
+    int floor_top = (int)((SCREEN_HEIGHT / 2.0) + (max_wall_height / 2.0));
+
+
     //打印天空
-    for (int i = 0; i < SCREEN_HEIGHT / 2; i++) {
+    for (int i = 0; i < floor_top; i++) {
         for (int j = 0; j < SCREEN_WIDTH; j++) {
             buffer[i][j] = ' ';
             color_buffer[i][j] = 0;
@@ -79,7 +85,8 @@ void renderer_render_frame(const Map* map, double x, double y, double player_ang
     }
 
     //打印地面
-    for (int i = SCREEN_HEIGHT / 2; i < SCREEN_HEIGHT; i++) {
+
+    for (int i = floor_top; i < SCREEN_HEIGHT; i++) {
         for (int j = 0; j < SCREEN_WIDTH; j++) {
             buffer[i][j] = '.';
             color_buffer[i][j] = 1;
@@ -133,7 +140,7 @@ void renderer_render_frame(const Map* map, double x, double y, double player_ang
     //     }
     //     printf("\n");
     // }
-    console_write_frame(buffer,color_buffer);
+    console_write_frame(buffer, color_buffer);
 
     fflush(stdout);
 }
