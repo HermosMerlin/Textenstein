@@ -43,11 +43,17 @@ char get_wall_char_by_distance(double distance, double hit_angle) {
         return '@';
     if (bright > 0.5)
         return '#';
-    if (bright > 0.1)
+    if (bright > 0.4)
+        return 'P';
+    if (bright > 0.3)
+        return 'O';
+    if (bright > 0.2)
         return 'o';
+    if (bright > 0.1)
+        return 'c';
     if (bright > 0.05)
-        return '+';
-    return '*';
+        return ':';
+    return '.';
 }
 
 char get_floor_char_by_row(int row) {
@@ -62,11 +68,12 @@ char get_floor_char_by_row(int row) {
 
 void renderer_render_frame(const Map* map, double x, double y, double player_angle) {
     char buffer[SCREEN_HEIGHT][SCREEN_WIDTH + 1];
-
+    int color_buffer[SCREEN_HEIGHT][SCREEN_WIDTH];
     //打印天空
     for (int i = 0; i < SCREEN_HEIGHT / 2; i++) {
         for (int j = 0; j < SCREEN_WIDTH; j++) {
             buffer[i][j] = ' ';
+            color_buffer[i][j] = 0;
         }
         buffer[i][SCREEN_WIDTH] = '\0';
     }
@@ -75,6 +82,7 @@ void renderer_render_frame(const Map* map, double x, double y, double player_ang
     for (int i = SCREEN_HEIGHT / 2; i < SCREEN_HEIGHT; i++) {
         for (int j = 0; j < SCREEN_WIDTH; j++) {
             buffer[i][j] = '.';
+            color_buffer[i][j] = 1;
         }
         buffer[i][SCREEN_WIDTH] = '\0';
     }
@@ -111,15 +119,21 @@ void renderer_render_frame(const Map* map, double x, double y, double player_ang
             //将墙面填充入frame
             for (int screen_y = wall_top; screen_y <= wall_bottom; screen_y++) {
                 buffer[screen_y][screen_col] = get_wall_char_by_distance(corrected_distance, result.hit_angle);
+                color_buffer[screen_y][screen_col] = 2;
             }
         }
     }
 
     //输出到屏幕
     console_move_home();
-    for (int row = 0; row < SCREEN_HEIGHT - 1; row++) {
-        printf("%s\n", buffer[row]);
-    }
-    printf("%s", buffer[SCREEN_HEIGHT - 1]);
+    // for (int row = 0; row < SCREEN_HEIGHT; row++) {
+    //     for (int col = 0; col < SCREEN_WIDTH; col++) {
+    //         console_set_color(color_buffer[row][col]);
+    //         printf("%c", buffer[row][col]);
+    //     }
+    //     printf("\n");
+    // }
+    console_write_frame(buffer,color_buffer);
+
     fflush(stdout);
 }
