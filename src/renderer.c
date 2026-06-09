@@ -34,16 +34,30 @@ void renderer_windowcolumn_debug(const Map* map, double x, double y, double play
     }
 }
 
-char get_wall_char_by_distance(double distance) {
-    if (distance < 1.0)
+char get_wall_char_by_distance(double distance, double hit_angle) {
+    //综合角度和距离计算光照强度
+    double angle_factor = 0.2 + 0.8 * pow((1.0 - fabs(hit_angle / (PI / 2.0))), 2);
+    double bright = 1.0 / (pow(distance, 1.2)) * angle_factor;
+
+    if (bright > 0.7)
         return '@';
-    if (distance < 2.0)
+    if (bright > 0.5)
         return '#';
-    if (distance < 3.0)
+    if (bright > 0.1)
         return 'O';
-    if (distance < 5.0)
+    if (bright > 0.05)
         return '+';
     return '*';
+}
+
+char get_floor_char_by_row(int row) {
+    if (SCREEN_HEIGHT - row < (SCREEN_HEIGHT / 2.0) * 0.3)
+        return '=';
+    if (SCREEN_HEIGHT - row < (SCREEN_HEIGHT / 2.0) * 0.6)
+        return '"';
+    if (SCREEN_HEIGHT - row < (SCREEN_HEIGHT / 2.0) * 0.9)
+        return '.';
+    return ' ';
 }
 
 void renderer_render_frame(const Map* map, double x, double y, double player_angle) {
@@ -96,7 +110,7 @@ void renderer_render_frame(const Map* map, double x, double y, double player_ang
 
             //将墙面填充入frame
             for (int screen_y = wall_top; screen_y <= wall_bottom; screen_y++) {
-                buffer[screen_y][screen_col] = get_wall_char_by_distance(corrected_distance);
+                buffer[screen_y][screen_col] = get_wall_char_by_distance(corrected_distance, result.hit_angle);
             }
         }
     }

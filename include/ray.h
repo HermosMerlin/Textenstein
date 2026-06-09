@@ -11,6 +11,8 @@ typedef struct {
     double hit_y;
     int map_x;
     int map_y;
+    double hit_angle;
+    int hit_side;
 } RayHit;
 
 RayHit ray_check(
