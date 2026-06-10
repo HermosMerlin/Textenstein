@@ -24,4 +24,6 @@ enum {
 #define PLAYER_MOVE_SPEED 2.0
 #define PLAYER_TURN_SPEED 4.0
 
+#define ESP 1e-6
+
 #endif

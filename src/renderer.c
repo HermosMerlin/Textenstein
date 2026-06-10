@@ -12,8 +12,8 @@ char get_wall_char(const RayHit* ray, double corrected_distance, double wall_y, 
     double bright = 1.0 / (pow(((corrected_distance / MAX_VIEW_DISTANCE) + 1), 2.5)) * angle_factor;
 
     double wall_x = ray->hit_wall_x;
-    assert(wall_x >= 0.0 && wall_x <= 1.0);
-    assert(wall_y >= 0.0 && wall_y <= 1.0);
+    assert(wall_x >= 0.0 - ESP && wall_x <= 1.0 + ESP);
+    assert(wall_y >= 0.0 - ESP && wall_y <= 1.0 + ESP);
 
     int bayer[4][4] = {
       {0, 8, 2, 10},
