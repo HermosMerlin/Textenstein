@@ -96,7 +96,7 @@ void renderer_render_frame(const Map* map, double x, double y, double player_ang
 
     for (int i = floor_top; i < SCREEN_HEIGHT; i++) {
         for (int j = 0; j < SCREEN_WIDTH; j++) {
-            buffer[i][j] = '.';
+            buffer[i][j] = '`';
             color_buffer[i][j] = CONSOLE_COLOR_FLOOR;
         }
         buffer[i][SCREEN_WIDTH] = '\0';
