@@ -37,7 +37,7 @@ int main(void) {
     QueryPerformanceFrequency(&freq);
     printf("QPC frequency(tick number): %lld\n", freq.QuadPart);
 
-    Sleep(5000);
+    Sleep(3000);
     console_clear();
 
     while (1) {

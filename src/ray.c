@@ -1,32 +1,6 @@
 #include "ray.h"
 #include "vector.h"
 
-RayHit ray_check(const Map* map, double x, double y, double angle, double max_distance) {
-    RayHit ray;
-    ray.hit = 0;
-    double dis = 0;
-    double step = 0.001;
-    while (dis < max_distance) {
-        x += cos(angle) * step;
-        y += sin(angle) * step;
-        dis += step;
-
-        if (map_in_wall(map, x, y)) {
-            ray.hit = 1;
-            ray.hit_x = x;
-            ray.hit_y = y;
-            ray.map_x = (int)x;
-            ray.map_y = (int)y;
-            ray.distance = dis;
-            break;
-        }
-    }
-    if (ray.hit == 0) {
-        ray.distance = max_distance;
-    }
-    return ray;
-}
-
 RayHit ray_check_dda(const Map* map, double x, double y, double angle, double max_distance) {
     RayHit ray;
     ray.hit = 0;
@@ -96,6 +70,14 @@ RayHit ray_check_dda(const Map* map, double x, double y, double angle, double ma
 
             //cos α = (vecA * vecB) / (|vecA| * |vecB|);
             ray.hit_angle = acos(vec2d_dot(normal, dir) * -1);
+
+            //计算该墙面具体命中的x坐标 (0.0~1.0)
+            if (ray.hit_side == 1) {
+                ray.hit_wall_x = ray.hit_x - floor(ray.hit_x);
+            }
+            else if (ray.hit_side == 0) {
+                ray.hit_wall_x = ray.hit_y - floor(ray.hit_y);
+            }
 
             return ray;
         }

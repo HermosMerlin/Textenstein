@@ -4,40 +4,16 @@
 #include "console.h"
 #include <math.h>
 #include <stdio.h>
+#include <assert.h>
 
-void renderer_windowcolumn_debug(const Map* map, double x, double y, double player_angle) {
-    RayHit result;
-    double half_fov = FOV / 2.0;
-    for (int i = 0; i < SCREEN_WIDTH; i++) {
-        //window column归一化到 -1 ~ 1 范围
-        double camera_x = 2.0 * (i + 0.5) / SCREEN_WIDTH - 1.0;
-        double angle_offset = atan(camera_x * tan(half_fov));
-        double angle = player_angle + angle_offset;
-
-        if (angle < 0)
-            angle += PI * 2.0;
-        else if (angle > PI * 2.0)
-            angle -= PI * 2.0;
-
-        result = ray_check_dda(map, x, y, angle, MAX_VIEW_DISTANCE);
-
-        if (result.hit == 1) {
-            //鱼眼矫正
-            double corrected_distance = result.distance * cos(angle_offset);
-            double wall_height = SCREEN_HEIGHT / corrected_distance;
-            double wall_top = SCREEN_HEIGHT / 2.0 - wall_height / 2.0;
-            double wall_bottom = SCREEN_HEIGHT / 2.0 + wall_height / 2.0;
-            printf("col:%d angle:%lf dis:%lf map:(%d,%d) wall:%lf~%lf\n", i, angle, result.distance, result.map_x, result.map_y, wall_bottom, wall_top);
-        }
-        else
-            printf("col:%d angle:%lf not hit\n", i, angle);
-    }
-}
-
-char get_wall_char_by_brightness(double distance, double hit_angle, int screen_x, int screen_y) {
+char get_wall_char(const RayHit* ray, double corrected_distance, double wall_y, int screen_x, int screen_y) {
     //综合角度和距离计算光照强度
-    double angle_factor = 0.2 + 0.8 * pow((1.0 - fabs(hit_angle / (PI / 2.0))), 2.5);
-    double bright = 1.0 / (pow(((distance / MAX_VIEW_DISTANCE) + 1), 2.5)) * angle_factor;
+    double angle_factor = 0.2 + 0.8 * pow((1.0 - fabs(ray->hit_angle / (PI / 2.0))), 2.5);
+    double bright = 1.0 / (pow(((corrected_distance / MAX_VIEW_DISTANCE) + 1), 2.5)) * angle_factor;
+
+    double wall_x = ray->hit_wall_x;
+    assert(wall_x >= 0.0 && wall_x <= 1.0);
+    assert(wall_y >= 0.0 && wall_y <= 1.0);
 
     int bayer[4][4] = {
       {0, 8, 2, 10},
@@ -47,8 +23,8 @@ char get_wall_char_by_brightness(double distance, double hit_angle, int screen_x
     double threshold = bayer[screen_y % 4][screen_x % 4] / 16.0;
 
     //远距离模糊墙面
-    if (distance > WALL_FADE_START_DISTANCE) {
-        double visibility = (distance - WALL_FADE_START_DISTANCE) / (MAX_VIEW_DISTANCE - WALL_FADE_START_DISTANCE);
+    if (ray->distance > WALL_FADE_START_DISTANCE) {
+        double visibility = (ray->distance - WALL_FADE_START_DISTANCE) / (MAX_VIEW_DISTANCE - WALL_FADE_START_DISTANCE);
 
         if (visibility > threshold)
             return ' ';
@@ -96,7 +72,7 @@ void renderer_render_frame(const Map* map, double x, double y, double player_ang
     }
 
     //打印墙面
-    RayHit result;
+    RayHit result = {0};
     double half_fov = FOV / 2.0;
     for (int screen_col = 0; screen_col < SCREEN_WIDTH; screen_col++) {
         //window column归一化到 -1 ~ 1 范围
@@ -119,14 +95,18 @@ void renderer_render_frame(const Map* map, double x, double y, double player_ang
             double wall_bottom = SCREEN_HEIGHT / 2.0 + wall_height / 2.0;
 
             //处理墙面是否造成屏幕越界
-            if (wall_top < 0)
-                wall_top = 0;
-            if (wall_bottom >= SCREEN_HEIGHT)
-                wall_bottom = SCREEN_HEIGHT - 1;
+            int wall_top_i = (int)ceil(wall_top - 0.5);
+            int wall_bottom_i = (int)floor(wall_bottom - 0.5);
+
+            if (wall_top_i < 0)
+                wall_top_i = 0;
+            if (wall_bottom_i >= SCREEN_HEIGHT)
+                wall_bottom_i = SCREEN_HEIGHT - 1;
 
             //将墙面填充入frame
-            for (int screen_y = wall_top; screen_y <= wall_bottom; screen_y++) {
-                buffer[screen_y][screen_col] = get_wall_char_by_brightness(corrected_distance, result.hit_angle, screen_col, screen_y);
+            for (int screen_y = wall_top_i; screen_y <= wall_bottom_i; screen_y++) {
+                double wall_y = ((screen_y + 0.5) - wall_top) / wall_height;
+                buffer[screen_y][screen_col] = get_wall_char(&result, corrected_distance, wall_y, screen_col, screen_y);
                 color_buffer[screen_y][screen_col] = CONSOLE_COLOR_WALL;
             }
         }

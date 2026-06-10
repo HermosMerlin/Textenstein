@@ -93,25 +93,9 @@ static void test_max_distance_blocks_far_wall(void) {
     expect_near("max distance value", hit.distance, 1.0, 1e-6);
 }
 
-static void test_dda_matches_simple_for_oblique_rays(void) {
-    Map map = make_test_map();
-    const double angles[] = {0.35, 2.2, 4.8};
-
-    for (int i = 0; i < (int)(sizeof(angles) / sizeof(angles[0])); i++) {
-        RayHit simple = ray_check(&map, 5.5, 4.5, angles[i], 20.0);
-        RayHit dda = ray_check_dda(&map, 5.5, 4.5, angles[i], 20.0);
-
-        expect_int("oblique simple hit", simple.hit, 1);
-        expect_int("oblique dda hit", dda.hit, 1);
-        expect_near("oblique distance", dda.distance, simple.distance, 0.01);
-        expect_int("oblique hit tile is wall", map_is_wall(&map, dda.map_x, dda.map_y), 1);
-    }
-}
-
 int main(void) {
     test_axis_aligned_rays();
     test_max_distance_blocks_far_wall();
-    test_dda_matches_simple_for_oblique_rays();
 
     if (failures != 0) {
         printf("%d ray test(s) failed\n", failures);
