@@ -14,6 +14,7 @@ add_executable(textenstein
     src/ray.c
     src/renderer.c
     src/console.c
+    src/game_time.c
     
 )
 

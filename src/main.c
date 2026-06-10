@@ -8,6 +8,7 @@
 #include "ray.h"
 #include "renderer.h"
 #include "console.h"
+#include "game_time.h"
 
 int main(void) {
     console_init(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -32,20 +33,30 @@ int main(void) {
     player_init(&player, &motion, map.player_init_x, map.player_init_y);
     printf("Player created\n");
 
+    LARGE_INTEGER freq;
+    QueryPerformanceFrequency(&freq);
+    printf("QPC frequency(tick number): %lld\n", freq.QuadPart);
+
     Sleep(5000);
     console_clear();
 
     while (1) {
+        double start_time = time_now_seconds();
+
         input_poll(&input);
-
         player_update(&player, &map);
-
         renderer_render_frame(&map, player.x, player.y, player.angle);
+
+        double end_time = time_now_seconds();
 
         if (input.quit) {
             break;
         }
-        Sleep((DWORD)(FIXED_DELTA_TIME * 1000.0));
+
+        double cost_time = end_time - start_time;
+        double sleep_time = FIXED_DELTA_TIME - cost_time;
+        if (sleep_time > 0.0)
+            Sleep((DWORD)(sleep_time * 1000.0));
     }
 
     console_show_cursor();
