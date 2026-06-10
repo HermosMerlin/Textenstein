@@ -37,7 +37,7 @@ void renderer_windowcolumn_debug(const Map* map, double x, double y, double play
 char get_wall_char_by_brightness(double distance, double hit_angle, int screen_x, int screen_y) {
     //综合角度和距离计算光照强度
     double angle_factor = 0.2 + 0.8 * pow((1.0 - fabs(hit_angle / (PI / 2.0))), 2.5);
-    double bright = 1.0 / (pow((distance + 1) / MAX_VIEW_DISTANCE * 4, 1.2)) * angle_factor;
+    double bright = 1.0 / (pow(((distance  / MAX_VIEW_DISTANCE) + 1), 2.5)) * angle_factor;
 
     int bayer[4][4] = {
       {0, 8, 2, 10},
