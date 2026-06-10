@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
+#include <assert.h>
 
 #define ANSI_MAX_LEN 32
 #define GLYPH_MAX_LEN 4
@@ -179,9 +180,10 @@ static void append_string(char* a, const char* b, int* pos, int max_size) {
 }
 
 void console_write_frame(
-    const char buffer[SCREEN_HEIGHT][SCREEN_WIDTH + 1],
-    const ConsoleColor color_buffer[SCREEN_HEIGHT][SCREEN_WIDTH]
-) {
+  const char buffer[SCREEN_HEIGHT][SCREEN_WIDTH + 1],
+  const ConsoleColor color_buffer[SCREEN_HEIGHT][SCREEN_WIDTH]) {
+    //check VT enable
+    assert(vt_enabled);
     char frame[FRAME_MAX];
     int pos = 0;
     ConsoleColor pre_color = CONSOLE_COLOR_DEFAULT;

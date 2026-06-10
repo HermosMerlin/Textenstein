@@ -11,6 +11,6 @@ typedef struct {
 } Player;
 
 void player_init(Player* player, Motion* motion, double x, double y);
-void player_update(Player* player, Motion* motion, const Map* map);
+void player_update(Player* player, const Map* map);
 void player_printf(Player* player);
 #endif

@@ -11,14 +11,14 @@ void player_init(Player* player, Motion* motion, double x, double y) {
     player->motion = motion;
 }
 
-void player_update(Player* player, Motion* motion, const Map* map) {
+void player_update(Player* player, const Map* map) {
     //update position
-    motion_update_dir(motion);
+    motion_update_dir(player->motion);
 
     Vec2d forward = {cos(player->angle), sin(player->angle)};
     Vec2d right = {-sin(player->angle), cos(player->angle)};
 
-    Vec2d local = motion_get_move(motion);
+    Vec2d local = motion_get_move(player->motion);
 
     Vec2d move = vec2d_scale((Vec2d){
                                local.y * forward.x + local.x * right.x,
@@ -40,7 +40,7 @@ void player_update(Player* player, Motion* motion, const Map* map) {
         player->y = next_y;
 
     //update direction
-    player->angle += motion->turn_speed * motion->turn_dir * FIXED_DELTA_TIME;
+    player->angle += player->motion->turn_speed * player->motion->turn_dir * FIXED_DELTA_TIME;
     if (player->angle > TAU)
         player->angle -= TAU;
     if (player->angle < 0)

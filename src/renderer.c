@@ -37,7 +37,7 @@ void renderer_windowcolumn_debug(const Map* map, double x, double y, double play
 char get_wall_char_by_brightness(double distance, double hit_angle, int screen_x, int screen_y) {
     //综合角度和距离计算光照强度
     double angle_factor = 0.2 + 0.8 * pow((1.0 - fabs(hit_angle / (PI / 2.0))), 2.5);
-    double bright = 1.0 / (pow(((distance  / MAX_VIEW_DISTANCE) + 1), 2.5)) * angle_factor;
+    double bright = 1.0 / (pow(((distance / MAX_VIEW_DISTANCE) + 1), 2.5)) * angle_factor;
 
     int bayer[4][4] = {
       {0, 8, 2, 10},
@@ -62,17 +62,10 @@ char get_wall_char_by_brightness(double distance, double hit_angle, int screen_x
     if (frac > threshold)
         index++;
 
-    return WALL_SHADE_CHARS[index];
-}
+    const char WALL_SHADE_CHARS[WALL_SHADE_COUNT] = {
+      '.', ':', 'c', 'o', 'O', 'P', '#', '@'};
 
-char get_floor_char_by_row(int row) {
-    if (SCREEN_HEIGHT - row < (SCREEN_HEIGHT / 2.0) * 0.3)
-        return '=';
-    if (SCREEN_HEIGHT - row < (SCREEN_HEIGHT / 2.0) * 0.6)
-        return '"';
-    if (SCREEN_HEIGHT - row < (SCREEN_HEIGHT / 2.0) * 0.9)
-        return '.';
-    return ' ';
+    return WALL_SHADE_CHARS[index];
 }
 
 void renderer_render_frame(const Map* map, double x, double y, double player_angle) {

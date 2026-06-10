@@ -74,7 +74,7 @@ int map_is_wall(const Map* map, int x, int y) {
 }
 
 int map_in_wall(const Map* map, double x, double y) {
-    if (x < 0 || x > (double)(MAP_MAX_WIDTH - 1) || y < 0 || y > (double)(MAP_MAX_HEIGHT - 1))
+    if (x < 0 || x > (double)(map->width - 1) || y < 0 || y > (double)(map->height - 1))
         return 1;
     if (map_is_wall(map, (int)x, (int)y))
         return 1;

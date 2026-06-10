@@ -10,8 +10,6 @@ enum {
 };
 
 #define WALL_SHADE_COUNT 8
-static const char WALL_SHADE_CHARS[WALL_SHADE_COUNT] = {
-  '.', ':', 'c', 'o', 'O', 'P', '#', '@'};
 
 #define PI 3.14159265358979323846
 #define TAU 6.28318530717958647692
