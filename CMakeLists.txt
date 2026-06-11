@@ -15,6 +15,7 @@ add_executable(textenstein
     src/renderer.c
     src/console.c
     src/game_time.c
+    src/wall_texture.c
     
 )
 

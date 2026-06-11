@@ -5,6 +5,8 @@ enum {
     MAP_MAX_HEIGHT = 128,
     MAP_MAX_WIDTH = 128,
 
+    TEXTURE_MAX_SIZE = 16,
+
     SCREEN_WIDTH = 178,
     SCREEN_HEIGHT = 44
 };
