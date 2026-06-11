@@ -54,8 +54,17 @@ int wall_texture_load(Texture* texture, const char* filename) {
 }
 
 double wall_texture_get_factor(const Texture* texture, double wall_x, double wall_y) {
-    double x = wall_x * texture->width;
-    double y = wall_y * texture->height;
+    int tx = (int)(wall_x * texture->width);
+    int ty = (int)(wall_y * texture->height);
 
-    return ((texture->pixels[(int)x][(int)y]) / 5.0 - 1.0);
+    if (tx < 0)
+        tx = 0;
+    if (tx >= texture->width)
+        tx = texture->width - 1;
+    if (ty < 0)
+        ty = 0;
+    if (ty >= texture->height)
+        ty = texture->height - 1;
+
+    return ((texture->pixels[(int)ty][(int)tx]) / 5.0 - 1.0);
 }

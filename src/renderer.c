@@ -23,27 +23,35 @@ char get_wall_char(const RayHit* ray, const Texture* texture, double corrected_d
     }
 
     //综合角度和距离计算光照强度
-    double angle_factor = 0.2 + 0.8 * pow((1.0 - fabs(ray->hit_angle / (PI / 2.0))), 2.5);
-    double distance_factor = 1.0 / (pow(((corrected_distance / MAX_VIEW_DISTANCE) + 1), 2.0));
 
-    //计算光照强度
-    double bright = 1.0 * distance_factor * angle_factor;
+    double t = corrected_distance / MAX_VIEW_DISTANCE;
+    if (t < 0.0)
+        t = 0.0;
+    if (t > 1.0)
+        t = 1.0;
+    double smooth = t * t * (3.0 - 2.0 * t);
+    double distance_light = 0.95 - 0.85 * smooth;
+
+    double facing = 1.0 - fabs(ray->hit_angle / (PI / 2.0));
+    double angle_light = 0.3 + 0.7 * facing;
 
     //计算墙面纹理参数
     double wall_x = ray->hit_wall_x;
-
-    double value = 0.5 + bright * 6.0;
     double texture_delta = wall_texture_get_factor(texture, wall_x, wall_y);
-
     double texture_strength;
     if (texture_delta < 0.0) {
-        texture_strength = 0.30 + 0.35 * angle_factor;
+        texture_strength = 0.45 + (0.1 - (t / 10.0));
     }
     else {
-        texture_strength = 0.20;
+        texture_strength = 0.05 + (0.1 - (t / 10.0));
     }
+    double texture_light = 1.0 + texture_delta * texture_strength;
 
-    value *= 1.0 + texture_delta * texture_strength;
+    //计算亮度
+    double base_light = distance_light * angle_light;
+    double final_light = base_light * texture_light;
+
+    double value = final_light * 6.0 + 0.5;
 
     //抖动 dithering
     int index = (int)value;
