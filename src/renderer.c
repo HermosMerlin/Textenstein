@@ -38,6 +38,7 @@ char get_wall_char(const RayHit* ray, double corrected_distance, double wall_y, 
     if (frac > threshold)
         index++;
 
+    assert(index >= 0 && index <= 7);
     const char WALL_SHADE_CHARS[WALL_SHADE_COUNT] = {
       '.', ':', 'c', 'o', 'O', 'P', '#', '@'};
 
