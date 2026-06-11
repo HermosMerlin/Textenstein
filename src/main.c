@@ -9,6 +9,7 @@
 #include "renderer.h"
 #include "console.h"
 #include "game_time.h"
+#include "wall_texture.h"
 
 int main(void) {
     console_init(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -22,6 +23,15 @@ int main(void) {
     }
     else {
         printf("Failed to load map\n");
+        return 1;
+    }
+
+    Texture texture;
+    if (wall_texture_load(&texture, "../assets/wall_brick_16.txt")) {
+        printf("Loaded wall texture\n");
+    }
+    else {
+        printf("Failed to load wall texture\n");
         return 1;
     }
 
@@ -45,7 +55,7 @@ int main(void) {
 
         input_poll(&input);
         player_update(&player, &map);
-        renderer_render_frame(&map, player.x, player.y, player.angle);
+        renderer_render_frame(&map, &texture, player.x, player.y, player.angle);
 
         double end_time = time_now_seconds();
 

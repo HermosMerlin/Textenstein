@@ -6,15 +6,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-char get_wall_char(const RayHit* ray, double corrected_distance, double wall_y, int screen_x, int screen_y) {
-    //综合角度和距离计算光照强度
-    double angle_factor = 0.2 + 0.8 * pow((1.0 - fabs(ray->hit_angle / (PI / 2.0))), 2.5);
-    double bright = 1.0 / (pow(((corrected_distance / MAX_VIEW_DISTANCE) + 1), 2.5)) * angle_factor;
-
-    double wall_x = ray->hit_wall_x;
-    assert(wall_x >= 0.0 - ESP && wall_x <= 1.0 + ESP);
-    assert(wall_y >= 0.0 - ESP && wall_y <= 1.0 + ESP);
-
+char get_wall_char(const RayHit* ray, const Texture* texture, double corrected_distance, double wall_y, int screen_x, int screen_y) {
     int bayer[4][4] = {
       {0, 8, 2, 10},
       {12, 4, 14, 6},
@@ -30,22 +22,48 @@ char get_wall_char(const RayHit* ray, double corrected_distance, double wall_y, 
             return ' ';
     }
 
+    //综合角度和距离计算光照强度
+    double angle_factor = 0.2 + 0.8 * pow((1.0 - fabs(ray->hit_angle / (PI / 2.0))), 2.5);
+    double distance_factor = 1.0 / (pow(((corrected_distance / MAX_VIEW_DISTANCE) + 1), 2.0));
+
+    //计算光照强度
+    double bright = 1.0 * distance_factor * angle_factor;
+
+    //计算墙面纹理参数
+    double wall_x = ray->hit_wall_x;
+
+    double value = 0.5 + bright * 6.0;
+    double texture_delta = wall_texture_get_factor(texture, wall_x, wall_y);
+
+    double texture_strength;
+    if (texture_delta < 0.0) {
+        texture_strength = 0.30 + 0.35 * angle_factor;
+    }
+    else {
+        texture_strength = 0.20;
+    }
+
+    value *= 1.0 + texture_delta * texture_strength;
+
     //抖动 dithering
-    double value = bright * 7.0;
     int index = (int)value;
     double frac = value - index;
 
     if (frac > threshold)
         index++;
 
-    assert(index >= 0 && index <= 7);
+    if (index < 0)
+        index = 0;
+    if (index > 7)
+        index = 7;
+
     const char WALL_SHADE_CHARS[WALL_SHADE_COUNT] = {
       '.', ':', 'c', 'o', 'O', 'P', '#', '@'};
 
     return WALL_SHADE_CHARS[index];
 }
 
-void renderer_render_frame(const Map* map, double x, double y, double player_angle) {
+void renderer_render_frame(const Map* map, const Texture* texture, double x, double y, double player_angle) {
     char buffer[SCREEN_HEIGHT][SCREEN_WIDTH + 1];
     ConsoleColor color_buffer[SCREEN_HEIGHT][SCREEN_WIDTH];
 
@@ -107,7 +125,7 @@ void renderer_render_frame(const Map* map, double x, double y, double player_ang
             //将墙面填充入frame
             for (int screen_y = wall_top_i; screen_y <= wall_bottom_i; screen_y++) {
                 double wall_y = ((screen_y + 0.5) - wall_top) / wall_height;
-                buffer[screen_y][screen_col] = get_wall_char(&result, corrected_distance, wall_y, screen_col, screen_y);
+                buffer[screen_y][screen_col] = get_wall_char(&result, texture, corrected_distance, wall_y, screen_col, screen_y);
                 color_buffer[screen_y][screen_col] = CONSOLE_COLOR_WALL;
             }
         }

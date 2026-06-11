@@ -10,5 +10,6 @@ typedef struct {
 } Texture;
 
 int wall_texture_load(Texture* texture, const char* filename);
+double wall_texture_get_factor(const Texture* texture, double wall_x, double wall_y);
 
 #endif
