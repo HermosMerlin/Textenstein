@@ -25,6 +25,7 @@ enum {
 
 #define PLAYER_MOVE_SPEED 2.0
 #define PLAYER_TURN_SPEED 4.0
+#define PLAYER_RADIUS 0.2
 
 #define EPS 1e-6
 

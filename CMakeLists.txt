@@ -16,6 +16,7 @@ add_executable(textenstein
     src/console.c
     src/game_time.c
     src/wall_texture.c
+    src/collision.c
     
 )
 
@@ -37,6 +38,7 @@ add_executable(test_ray
     test/test_ray.c
     src/map.c
     src/ray.c
+    src/collision.c
 )
 
 target_include_directories(test_ray PRIVATE include)

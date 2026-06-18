@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <windows.h>
 #include "config.h"
 #include "map.h"
@@ -40,8 +41,12 @@ int main(void) {
     Motion motion;
     Player player;
     motion_init(&motion, &input);
-    player_init(&player, &motion, map.player_init_x, map.player_init_y);
-    printf("Player created\n");
+    if (player_init(&player, &motion, &map, map.player_init_x, map.player_init_y) == 1)
+        printf("Player created\n");
+    else {
+        printf("Player failed to create\n");
+        exit(1);
+    }
 
     LARGE_INTEGER freq;
     QueryPerformanceFrequency(&freq);
