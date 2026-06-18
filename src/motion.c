@@ -3,7 +3,7 @@
 
 void motion_init(Motion* motion, InputState* input) {
     motion->input = input;
-    motion->move_speed = PLAYER_MOVE_SPEED;
+    motion->accel = PLAYER_ACCEL;
     motion->turn_speed = PLAYER_TURN_SPEED;
 }
 
@@ -16,5 +16,6 @@ void motion_update_dir(Motion* motion) {
 }
 
 Vec2d motion_get_move(Motion* motion) {
-    return (vec2d_scale(motion->move_dir, motion->move_speed));
+    motion_update_dir(motion);
+    return (vec2d_scale(motion->move_dir, motion->accel));
 }

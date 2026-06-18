@@ -65,7 +65,7 @@ int main(void) {
         }
 
         double cost_time = end_time - start_time;
-        double sleep_time = FIXED_DELTA_TIME - cost_time;
+        double sleep_time = DELTA_TIME - cost_time;
         if (sleep_time > 0.0)
             Sleep((DWORD)(sleep_time * 1000.0));
     }

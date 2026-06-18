@@ -21,11 +21,13 @@ enum {
 #define FOV (PI / 2.0)
 
 #define GAME_FPS 120.0
-#define FIXED_DELTA_TIME (1.0 / GAME_FPS)
+#define DELTA_TIME (1.0 / GAME_FPS)
 
-#define PLAYER_MOVE_SPEED 2.0
 #define PLAYER_TURN_SPEED 4.0
 #define PLAYER_RADIUS 0.2
+#define PLAYER_MAX_SPEED 2.0
+#define PLAYER_ACCEL 16.0
+#define PLAYER_FRICTION 8.0
 
 #define EPS 1e-6
 

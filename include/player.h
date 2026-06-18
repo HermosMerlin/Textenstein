@@ -8,6 +8,7 @@ typedef struct {
     double y;
     double angle;
     double radius;
+    Vec2d velocity;
     Motion* motion;
 } Player;
 

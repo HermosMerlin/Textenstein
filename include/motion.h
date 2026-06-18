@@ -5,7 +5,7 @@
 #include "input.h"
 
 typedef struct {
-    double move_speed;
+    double accel;
     double turn_speed;
     Vec2d move_dir;
     double turn_dir;
