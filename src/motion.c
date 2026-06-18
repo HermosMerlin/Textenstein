@@ -15,7 +15,7 @@ void motion_update_dir(Motion* motion) {
     motion->turn_dir = motion->input->turn_right - motion->input->turn_left;
 }
 
-Vec2d motion_get_move(Motion* motion) {
+Vec2d motion_get_accel(Motion* motion) {
     motion_update_dir(motion);
     return (vec2d_scale(motion->move_dir, motion->accel));
 }

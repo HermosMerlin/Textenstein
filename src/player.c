@@ -24,7 +24,7 @@ void player_velocity_update(Player* player) {
     Vec2d forward = {cos(player->angle), sin(player->angle)};
     Vec2d right = {-sin(player->angle), cos(player->angle)};
 
-    Vec2d accel_local = motion_get_move(player->motion);
+    Vec2d accel_local = motion_get_accel(player->motion);
 
     Vec2d accel_world = (Vec2d){
       accel_local.y * forward.x + accel_local.x * right.x,

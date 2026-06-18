@@ -15,5 +15,5 @@ typedef struct {
 void motion_init(Motion* motion, InputState* input);
 
 void motion_update_dir(Motion* motion);
-Vec2d motion_get_move(Motion* motion);
+Vec2d motion_get_accel(Motion* motion);
 #endif
