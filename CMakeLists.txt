@@ -17,6 +17,7 @@ add_executable(textenstein
     src/game_time.c
     src/wall_texture.c
     src/collision.c
+    src/shoot.c
     
 )
 

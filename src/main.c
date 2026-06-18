@@ -11,6 +11,7 @@
 #include "console.h"
 #include "game_time.h"
 #include "wall_texture.h"
+#include "shoot.h"
 
 int main(void) {
     console_init(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -36,8 +37,7 @@ int main(void) {
         return 1;
     }
 
-    // input_test();
-    InputState input;
+    InputState input = {0};
     Motion motion;
     Player player;
     motion_init(&motion, &input);

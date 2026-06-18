@@ -1,39 +1,51 @@
 #include "input.h"
 #include <windows.h>
-#include <stdio.h>
 
 static int key_down(int key) {
     return (GetAsyncKeyState(key) & 0x8000) != 0;
 }
 void input_poll(InputState* input) {
-    input->forward = key_down('W');
-    input->backward = key_down('S');
-    input->strafe_left = key_down('A');
-    input->strafe_right = key_down('D');
+    // 当前状态
+    int forward_now = key_down('W');
+    int backward_now = key_down('S');
+    int strafe_left_now = key_down('A');
+    int strafe_right_now = key_down('D');
+    int turn_left_now = key_down(VK_LEFT) || key_down('J');
+    int turn_right_now = key_down(VK_RIGHT) || key_down('L');
+    int fire_now = key_down(VK_SPACE);
+    int dash_now = key_down(VK_SHIFT);
+    int quit_now = key_down(VK_ESCAPE);
 
-    input->turn_left = key_down(VK_LEFT) || key_down('J');
-    input->turn_right = key_down(VK_RIGHT) || key_down('L');
+    // 边沿检测:当前按 + 上帧没按 = 刚按下
+    input->forward_pressed = forward_now && !input->_prev_forward;
+    input->backward_pressed = backward_now && !input->_prev_backward;
+    input->strafe_left_pressed = strafe_left_now && !input->_prev_strafe_left;
+    input->strafe_right_pressed = strafe_right_now && !input->_prev_strafe_right;
+    input->turn_left_pressed = turn_left_now && !input->_prev_turn_left;
+    input->turn_right_pressed = turn_right_now && !input->_prev_turn_right;
+    input->fire_pressed = fire_now && !input->_prev_fire;
+    input->dash_pressed = dash_now && !input->_prev_dash;
+    input->quit_pressed = quit_now && !input->_prev_quit;
 
-    input->quit = key_down(VK_ESCAPE);
-}
+    // 更新当前状态
+    input->forward = forward_now;
+    input->backward = backward_now;
+    input->strafe_left = strafe_left_now;
+    input->strafe_right = strafe_right_now;
+    input->turn_left = turn_left_now;
+    input->turn_right = turn_right_now;
+    input->fire = fire_now;
+    input->dash = dash_now;
+    input->quit = quit_now;
 
-void input_test(InputState* input) {
-    while (1) {
-        input_poll(input);
-
-        printf("W:%d S:%d A:%d D:%d L:%d R:%d Q:%d\n",
-          input->forward,
-          input->backward,
-          input->strafe_left,
-          input->strafe_right,
-          input->turn_left,
-          input->turn_right,
-          input->quit);
-
-        if (input->quit) {
-            break;
-        }
-
-        Sleep(100);
-    }
+    // 保存本帧状态供下帧用
+    input->_prev_forward = forward_now;
+    input->_prev_backward = backward_now;
+    input->_prev_strafe_left = strafe_left_now;
+    input->_prev_strafe_right = strafe_right_now;
+    input->_prev_turn_left = turn_left_now;
+    input->_prev_turn_right = turn_right_now;
+    input->_prev_fire = fire_now;
+    input->_prev_dash = dash_now;
+    input->_prev_quit = quit_now;
 }
