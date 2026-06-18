@@ -40,7 +40,7 @@ static inline double vec2d_dot(Vec2d a, Vec2d b) {
 static inline Vec2d vec2d_angle_to_vector(double angle) {
     double dir_x = cos(angle);
     double dir_y = sin(angle);
-    return ((Vec2d){dir_x,dir_y});
+    return ((Vec2d){dir_x, dir_y});
 }
 
 #endif

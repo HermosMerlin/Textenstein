@@ -12,8 +12,7 @@ void console_init(int cols, int rows);
 void console_clear(void);
 void console_show_cursor(void);
 void console_write_frame(
-    const char buffer[SCREEN_HEIGHT][SCREEN_WIDTH + 1],
-    const ConsoleColor color_buffer[SCREEN_HEIGHT][SCREEN_WIDTH]
-);
+  const char buffer[SCREEN_HEIGHT][SCREEN_WIDTH + 1],
+  const ConsoleColor color_buffer[SCREEN_HEIGHT][SCREEN_WIDTH]);
 
 #endif

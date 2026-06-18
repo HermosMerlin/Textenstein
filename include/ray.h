@@ -12,7 +12,7 @@ typedef struct {
     int map_x;
     int map_y;
     double hit_angle;
-    int hit_side; // 0 -> 竖直墙 ; 1 -> 水平墙
+    int hit_side;      // 0 -> 竖直墙 ; 1 -> 水平墙
     double hit_wall_x; //0.0 ~ 1.0
 } RayHit;
 
