@@ -48,10 +48,6 @@ int main(void) {
         exit(1);
     }
 
-    LARGE_INTEGER freq;
-    QueryPerformanceFrequency(&freq);
-    printf("QPC frequency(tick number): %lld\n", freq.QuadPart);
-
     Sleep(3000);
     console_clear();
 

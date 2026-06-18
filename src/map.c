@@ -3,10 +3,9 @@
 #include <string.h>
 
 int map_load(Map* map, const char* filename) {
-    FILE* file = NULL;
-    errno_t err = fopen_s(&file, filename, "r");
+    FILE* file = fopen(filename, "r");
 
-    if (err != 0 || file == NULL) {
+    if (file == NULL) {
         perror(filename);
         return 0;
     }
