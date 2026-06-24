@@ -2,6 +2,7 @@
 #include "config.h"
 #include "ray.h"
 #include "console.h"
+#include "frame_buffer.h"
 #include <math.h>
 #include <stdio.h>
 #include <assert.h>
@@ -71,10 +72,7 @@ char get_wall_char(const RayHit* ray, const Texture* texture, double corrected_d
     return WALL_SHADE_CHARS[index];
 }
 
-void renderer_render_frame(const Map* map, const Texture* texture, double x, double y, double player_angle) {
-    char buffer[SCREEN_HEIGHT][SCREEN_WIDTH + 1];
-    ConsoleColor color_buffer[SCREEN_HEIGHT][SCREEN_WIDTH];
-
+void renderer_render_frame(const Map* map, const Texture* texture, const Player* player, FrameBuffer* fb) {
     //考虑最大视距，计算地面消失点
     double max_wall_height = (double)SCREEN_HEIGHT / MAX_VIEW_DISTANCE;
     int floor_top = (int)((SCREEN_HEIGHT / 2.0) + (max_wall_height / 2.0));
@@ -82,20 +80,20 @@ void renderer_render_frame(const Map* map, const Texture* texture, double x, dou
     //打印天空
     for (int i = 0; i < floor_top; i++) {
         for (int j = 0; j < SCREEN_WIDTH; j++) {
-            buffer[i][j] = ' ';
-            color_buffer[i][j] = CONSOLE_COLOR_DEFAULT;
+            fb->chars[i][j] = ' ';
+            fb->colors[i][j] = COLOR_DEFAULT;
         }
-        buffer[i][SCREEN_WIDTH] = '\0';
+        fb->chars[i][SCREEN_WIDTH] = '\0';
     }
 
     //打印地面
 
     for (int i = floor_top; i < SCREEN_HEIGHT; i++) {
         for (int j = 0; j < SCREEN_WIDTH; j++) {
-            buffer[i][j] = '`';
-            color_buffer[i][j] = CONSOLE_COLOR_FLOOR;
+            fb->chars[i][j] = '`';
+            fb->colors[i][j] = COLOR_FLOOR;
         }
-        buffer[i][SCREEN_WIDTH] = '\0';
+        fb->chars[i][SCREEN_WIDTH] = '\0';
     }
 
     //打印墙面
@@ -105,14 +103,14 @@ void renderer_render_frame(const Map* map, const Texture* texture, double x, dou
         //window column归一化到 -1 ~ 1 范围
         double camera_x = 2.0 * (screen_col + 0.5) / SCREEN_WIDTH - 1.0;
         double angle_offset = atan(camera_x * tan(half_fov));
-        double angle = player_angle + angle_offset;
+        double angle = player->angle + angle_offset;
 
         if (angle < 0)
             angle += PI * 2.0;
         else if (angle > PI * 2.0)
             angle -= PI * 2.0;
 
-        result = ray_check_dda(map, x, y, angle, MAX_VIEW_DISTANCE);
+        result = ray_check_dda(map, player->x, player->y, angle, MAX_VIEW_DISTANCE);
 
         if (result.hit == 1) {
             //鱼眼矫正
@@ -133,14 +131,14 @@ void renderer_render_frame(const Map* map, const Texture* texture, double x, dou
             //将墙面填充入frame
             for (int screen_y = wall_top_i; screen_y <= wall_bottom_i; screen_y++) {
                 double wall_y = ((screen_y + 0.5) - wall_top) / wall_height;
-                buffer[screen_y][screen_col] = get_wall_char(&result, texture, corrected_distance, wall_y, screen_col, screen_y);
-                color_buffer[screen_y][screen_col] = CONSOLE_COLOR_WALL;
+                fb->chars[screen_y][screen_col] = get_wall_char(&result, texture, corrected_distance, wall_y, screen_col, screen_y);
+                fb->colors[screen_y][screen_col] = COLOR_WALL;
             }
         }
     }
 
     //输出到屏幕
-    console_write_frame(buffer, color_buffer);
+    console_write_frame(fb);
 
     fflush(stdout);
 }

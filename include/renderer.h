@@ -3,7 +3,9 @@
 
 #include "map.h"
 #include "wall_texture.h"
+#include "player.h"
+#include "frame_buffer.h"
 
-void renderer_render_frame(const Map* map, const Texture* texture, double x, double y, double angle);
+void renderer_render_frame(const Map* map, const Texture* texture, const Player* player,FrameBuffer* fb);
 
 #endif

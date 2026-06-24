@@ -11,11 +11,11 @@
 
 static const char* console_vt_color_code(ConsoleColor color) {
     switch (color) {
-    case CONSOLE_COLOR_FLOOR:
+    case COLOR_FLOOR:
         return "\x1b[38;2;156;128;76m";
-    case CONSOLE_COLOR_WALL:
+    case COLOR_WALL:
         return "\x1b[38;2;132;138;124m";
-    case CONSOLE_COLOR_DEFAULT:
+    case COLOR_DEFAULT:
     default:
         return "\x1b[0m";
     }
@@ -102,21 +102,19 @@ static void append_string(char* a, const char* b, int* pos, int max_size) {
     }
 }
 
-void console_write_frame(
-  const char buffer[SCREEN_HEIGHT][SCREEN_WIDTH + 1],
-  const ConsoleColor color_buffer[SCREEN_HEIGHT][SCREEN_WIDTH]) {
+void console_write_frame(const FrameBuffer* fb) {
     char frame[FRAME_MAX];
     int pos = 0;
-    ConsoleColor pre_color = CONSOLE_COLOR_DEFAULT;
+    ConsoleColor pre_color = COLOR_DEFAULT;
 
     console_move_home();
     for (int row = 0; row < SCREEN_HEIGHT; row++) {
         for (int col = 0; col < SCREEN_WIDTH; col++) {
-            if (pre_color != color_buffer[row][col]) {
-                append_string(frame, console_vt_color_code(color_buffer[row][col]), &pos, FRAME_MAX);
-                pre_color = color_buffer[row][col];
+            if (pre_color != fb->colors[row][col]) {
+                append_string(frame, console_vt_color_code(fb->colors[row][col]), &pos, FRAME_MAX);
+                pre_color = fb->colors[row][col];
             }
-            frame[pos] = buffer[row][col];
+            frame[pos] = fb->chars[row][col];
             pos++;
         }
         if (row < SCREEN_HEIGHT - 1) {
@@ -124,7 +122,7 @@ void console_write_frame(
             pos++;
         }
     }
-    append_string(frame, console_vt_color_code(CONSOLE_COLOR_DEFAULT), &pos, FRAME_MAX);
+    append_string(frame, console_vt_color_code(COLOR_DEFAULT), &pos, FRAME_MAX);
     frame[pos] = '\0';
     printf("%s", frame);
     fflush(stdout);

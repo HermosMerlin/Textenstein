@@ -18,6 +18,7 @@ add_executable(textenstein
     src/wall_texture.c
     src/collision.c
     src/shoot.c
+    src/frame_buffer.c
     
 )
 

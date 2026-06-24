@@ -12,6 +12,7 @@
 #include "game_time.h"
 #include "wall_texture.h"
 #include "shoot.h"
+#include "frame_buffer.h"
 
 int main(void) {
     console_init(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -48,6 +49,9 @@ int main(void) {
         exit(1);
     }
 
+    FrameBuffer framebuffer;
+    frame_buffer_init(&framebuffer);
+
     Sleep(3000);
     console_clear();
 
@@ -56,7 +60,7 @@ int main(void) {
 
         input_poll(&input);
         player_update(&player, &map);
-        renderer_render_frame(&map, &texture, player.x, player.y, player.angle);
+        renderer_render_frame(&map, &texture, &player, &framebuffer);
 
         double end_time = time_now_seconds();
 
