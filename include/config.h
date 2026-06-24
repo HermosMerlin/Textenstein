@@ -29,6 +29,9 @@ enum {
 #define PLAYER_ACCEL 16.0
 #define PLAYER_FRICTION 8.0
 
+#define ENTITY_RADIUS 0.2
+#define ENTITY_MAX 16
+
 #define EPS 1e-6
 
 #endif
