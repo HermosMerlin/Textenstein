@@ -1,7 +1,6 @@
 #ifndef CONSOLE_H
 #define CONSOLE_H
 
-#include "config.h"
 #include "frame_buffer.h"
 
 void console_init(int cols, int rows);
