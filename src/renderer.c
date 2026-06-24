@@ -83,7 +83,6 @@ void renderer_render_frame(const Map* map, const Texture* texture, const Player*
             fb->chars[i][j] = ' ';
             fb->colors[i][j] = COLOR_DEFAULT;
         }
-        fb->chars[i][SCREEN_WIDTH] = '\0';
     }
 
     //打印地面
@@ -93,7 +92,6 @@ void renderer_render_frame(const Map* map, const Texture* texture, const Player*
             fb->chars[i][j] = '`';
             fb->colors[i][j] = COLOR_FLOOR;
         }
-        fb->chars[i][SCREEN_WIDTH] = '\0';
     }
 
     //打印墙面
