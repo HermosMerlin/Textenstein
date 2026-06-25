@@ -12,7 +12,7 @@ typedef struct {
     double radius;
 } Entity;
 
-typedef struct {
+typedef struct EntityManager {
     Entity entitylist[ENTITY_MAX];
     int count;
     int id_cursor;

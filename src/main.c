@@ -53,7 +53,7 @@ int main(void) {
     Motion motion;
     Player player;
     motion_init(&motion, &input);
-    if (player_init(&player, &motion, &map, map.player_init_x, map.player_init_y) == 1)
+    if (player_init(&player, &motion, &map, &entity_manager, map.player_init_x, map.player_init_y) == 1)
         printf("Player created\n");
     else {
         printf("Player failed to create\n");
@@ -70,7 +70,7 @@ int main(void) {
         double start_time = time_now_seconds();
 
         input_poll(&input);
-        player_update(&player, &map);
+        player_update(&player, &map,&entity_manager);
         renderer_render_background(&map, &texture, &player, &frame_buffer);
         entity_render(&entity_manager, &player, &frame_buffer);
         console_write_frame(&frame_buffer);

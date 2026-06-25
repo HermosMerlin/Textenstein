@@ -5,14 +5,14 @@
 #include <math.h>
 #include <stdio.h>
 
-int player_init(Player* player, Motion* motion, const Map* map, double x, double y) {
+int player_init(Player* player, Motion* motion, const Map* map, const EntityManager* em, double x, double y) {
     player->x = x;
     player->y = y;
     player->angle = 0;
     player->motion = motion;
     player->radius = PLAYER_RADIUS;
     player->velocity = (Vec2d){0, 0};
-    if (collision_is_safe(map, x, y, player->radius) == 0) {
+    if (collision_is_safe(map, em, x, y, player->radius) == 0) {
         fprintf(stderr, "出生点 (%.2f, %.2f) 压墙,半径 %.2f\n", x, y, player->radius);
         return 0;
     }
@@ -48,7 +48,7 @@ void player_velocity_update(Player* player) {
 }
 
 //update position after calculating collision
-void player_update(Player* player, const Map* map) {
+void player_update(Player* player, const Map* map, const EntityManager* em) {
     player_velocity_update(player);
 
     double delta_x = player->velocity.x * DELTA_TIME;
@@ -58,16 +58,16 @@ void player_update(Player* player, const Map* map) {
     double next_y = player->y + delta_y;
 
     //先尝试组合位置移动
-    if (collision_is_safe(map, next_x, next_y, player->radius)) {
+    if (collision_is_safe(map, em, next_x, next_y, player->radius)) {
         player->x = next_x;
         player->y = next_y;
     }
     //失败后分轴判断移动
-    else if (collision_can_move_x(map, next_x, player->y, player->radius)) {
+    else if (collision_can_move_x(map, em, next_x, player->y, player->radius)) {
         player->x = next_x;
         player->velocity.y = 0;
     }
-    else if (collision_can_move_y(map, player->x, next_y, player->radius)) {
+    else if (collision_can_move_y(map, em, player->x, next_y, player->radius)) {
         player->y = next_y;
         player->velocity.x = 0;
     }

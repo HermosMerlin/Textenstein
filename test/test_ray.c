@@ -2,6 +2,7 @@
 #include "map.h"
 #include "ray.h"
 #include "collision.h"
+#include "entity.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -101,38 +102,41 @@ static void test_collision(void) {
     Map map = make_test_map();
     const double r = 0.2;
 
+    // 空 EntityManager(无 alive 实体),只验证墙碰撞
+    EntityManager em = {0};
+
     // --- collision_is_safe ---
     // case 1: 空地中心应安全
-    expect_int("is_safe 空地中心", collision_is_safe(&map, 4.5, 4.5, r), 1);
+    expect_int("is_safe 空地中心", collision_is_safe(&map, &em, 4.5, 4.5, r), 1);
     // case 2: 压右墙(7.0+0.2=7.2 落到墙列 7)应不安全
-    expect_int("is_safe 压右墙", collision_is_safe(&map, 7.0, 4.5, r), 0);
+    expect_int("is_safe 压右墙", collision_is_safe(&map, &em, 7.0, 4.5, r), 0);
     // case 3: 压上墙(0.5-0.2=0.3 落到墙行 0)应不安全
-    expect_int("is_safe 压上墙", collision_is_safe(&map, 4.5, 0.5, r), 0);
+    expect_int("is_safe 压上墙", collision_is_safe(&map, &em, 4.5, 0.5, r), 0);
     // case 4: 角落压墙(7.0, 7.0)应不安全
-    expect_int("is_safe 角落压墙", collision_is_safe(&map, 7.0, 7.0, r), 0);
+    expect_int("is_safe 角落压墙", collision_is_safe(&map, &em, 7.0, 7.0, r), 0);
 
     // --- collision_can_move_x ---
     // case 5: x 从 4.5 移到 4.7,方框右边 4.9 落列 4(空地),应允许
-    expect_int("can_move_x 小步", collision_can_move_x(&map, 4.7, 4.5, r), 1);
+    expect_int("can_move_x 小步", collision_can_move_x(&map, &em, 4.7, 4.5, r), 1);
     // case 6: x 从 4.5 移到 4.9,方框右边 5.1 落列 5(空地),应允许
-    expect_int("can_move_x 接近边界", collision_can_move_x(&map, 4.9, 4.5, r), 1);
+    expect_int("can_move_x 接近边界", collision_can_move_x(&map, &em, 4.9, 4.5, r), 1);
     // case 7: x 从 4.5 移到 6.9,方框右边 7.1 落列 7(墙),应禁止
-    expect_int("can_move_x 撞右墙", collision_can_move_x(&map, 6.9, 4.5, r), 0);
+    expect_int("can_move_x 撞右墙", collision_can_move_x(&map, &em, 6.9, 4.5, r), 0);
     // case 8: x 从 4.5 移到 1.1,方框左边 0.9 落列 0(墙),应禁止
-    expect_int("can_move_x 撞左墙", collision_can_move_x(&map, 1.1, 4.5, r), 0);
+    expect_int("can_move_x 撞左墙", collision_can_move_x(&map, &em, 1.1, 4.5, r), 0);
 
     // --- collision_can_move_y ---
     // case 9: y 从 4.5 移到 4.7,方框下边 4.9 落行 4(空地),应允许
-    expect_int("can_move_y 小步", collision_can_move_y(&map, 4.5, 4.7, r), 1);
+    expect_int("can_move_y 小步", collision_can_move_y(&map, &em, 4.5, 4.7, r), 1);
     // case 10: y 从 4.5 移到 4.9,方框下边 5.1 落行 5(空地),应允许
-    expect_int("can_move_y 接近边界", collision_can_move_y(&map, 4.5, 4.9, r), 1);
+    expect_int("can_move_y 接近边界", collision_can_move_y(&map, &em, 4.5, 4.9, r), 1);
     // case 11: y 从 4.5 移到 6.9,方框下边 7.1 落行 7(墙),应禁止
     //         此 case 抓 collision_can_move_y 内部坐标颠倒 bug:
     //         若 map_is_wall(map, y_min, cx) 颠倒,会查错格子,返回 1(穿墙)
-    expect_int("can_move_y 撞下墙", collision_can_move_y(&map, 4.5, 6.9, r), 0);
+    expect_int("can_move_y 撞下墙", collision_can_move_y(&map, &em, 4.5, 6.9, r), 0);
     // case 12: y 从 4.5 移到 1.1,方框上边 0.9 落行 0(墙),应禁止
     //         此 case 抓调用方参数顺序 bug:若传成 (map, next_y, x, r) 会查错格子
-    expect_int("can_move_y 撞上墙", collision_can_move_y(&map, 4.5, 1.1, r), 0);
+    expect_int("can_move_y 撞上墙", collision_can_move_y(&map, &em, 4.5, 1.1, r), 0);
 }
 
 int main(void) {
