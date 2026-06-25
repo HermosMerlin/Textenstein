@@ -74,8 +74,8 @@ void entity_render(EntityManager* em, Player* player, FrameBuffer* fb) {
             if (enemy_cpos.y <= 0)
                 continue;
 
-            int enemy_height = (int)round(SCREEN_HEIGHT / enemy_dis * ENEMY_HEIGHT);
-            int enemy_width = enemy_height;
+            int enemy_height = (int)round(SCREEN_HEIGHT / enemy_dis * ENEMY_VISUAL_HEIGHT);
+            int enemy_width = (int)round(ENTITY_RADIUS * SCREEN_WIDTH / (enemy_cpos.y * tan(FOV / 2.0)));
 
             //必须严格对应renderer模块中算法
             double camera_x = enemy_cpos.x / enemy_cpos.y / tan(FOV / 2.0);

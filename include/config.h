@@ -31,7 +31,7 @@ enum {
 
 #define ENTITY_RADIUS 0.2
 #define ENTITY_MAX 16
-#define ENEMY_HEIGHT 0.6
+#define ENEMY_VISUAL_HEIGHT 0.6
 
 #define EPS 1e-6
 
