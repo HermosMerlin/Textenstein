@@ -15,6 +15,8 @@ static const char* console_vt_color_code(ConsoleColor color) {
         return "\x1b[38;2;156;128;76m";
     case COLOR_WALL:
         return "\x1b[38;2;132;138;124m";
+    case COLOR_ENEMY:
+        return "\x1b[38;2;255;64;64m";
     case COLOR_DEFAULT:
     default:
         return "\x1b[0m";
@@ -127,4 +129,3 @@ void console_write_frame(const FrameBuffer* fb) {
     printf("%s", frame);
     fflush(stdout);
 }
-

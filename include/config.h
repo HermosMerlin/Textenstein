@@ -9,10 +9,6 @@ enum {
 
     SCREEN_WIDTH = 178,
     SCREEN_HEIGHT = 44,
-
-    WALL_SHADE_COUNT = 8,
-    MAX_VIEW_DISTANCE = 6,
-    WALL_FADE_START_DISTANCE = 4
 };
 
 #define PI 3.14159265358979323846
@@ -23,6 +19,10 @@ enum {
 #define GAME_FPS 120.0
 #define DELTA_TIME (1.0 / GAME_FPS)
 
+#define WALL_SHADE_COUNT 8
+#define MAX_VIEW_DISTANCE 6
+#define WALL_FADE_START_DISTANCE 4
+
 #define PLAYER_TURN_SPEED 4.0
 #define PLAYER_RADIUS 0.2
 #define PLAYER_MAX_SPEED 2.0
@@ -31,6 +31,7 @@ enum {
 
 #define ENTITY_RADIUS 0.2
 #define ENTITY_MAX 16
+#define ENEMY_HEIGHT 0.5
 
 #define EPS 1e-6
 

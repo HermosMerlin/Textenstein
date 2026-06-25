@@ -13,6 +13,7 @@
 #include "wall_texture.h"
 #include "shoot.h"
 #include "frame_buffer.h"
+#include "entity.h"
 
 int main(void) {
     console_init(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -20,12 +21,22 @@ int main(void) {
 
     Map map;
 
-    if (map_load(&map, "../assets/complex_map.txt")) {
+    if (map_load(&map, "../assets/complex_map_e.txt")) {
         printf("Loaded map\n");
         map_print(&map);
     }
     else {
         printf("Failed to load map\n");
+        return 1;
+    }
+
+    EntityManager entity_manager;
+    entity_manager_init(&entity_manager);
+    if (entity_load(&map, &entity_manager)) {
+        printf("Loaded entities: %d\n", entity_manager.count);
+    }
+    else {
+        printf("Failed to load entities\n");
         return 1;
     }
 
@@ -49,8 +60,8 @@ int main(void) {
         exit(1);
     }
 
-    FrameBuffer framebuffer;
-    frame_buffer_init(&framebuffer);
+    FrameBuffer frame_buffer;
+    frame_buffer_init(&frame_buffer);
 
     Sleep(3000);
     console_clear();
@@ -60,8 +71,9 @@ int main(void) {
 
         input_poll(&input);
         player_update(&player, &map);
-        renderer_render_background(&map, &texture, &player, &framebuffer);
-        console_write_frame(&framebuffer);
+        renderer_render_background(&map, &texture, &player, &frame_buffer);
+        entity_render(&entity_manager, &player, &frame_buffer);
+        console_write_frame(&frame_buffer);
 
         double end_time = time_now_seconds();
 
