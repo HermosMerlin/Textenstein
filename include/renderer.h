@@ -6,6 +6,6 @@
 #include "player.h"
 #include "frame_buffer.h"
 
-void renderer_render_frame(const Map* map, const Texture* texture, const Player* player,FrameBuffer* fb);
+void renderer_render_background(const Map* map, const Texture* texture, const Player* player,FrameBuffer* fb);
 
 #endif

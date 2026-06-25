@@ -4,7 +4,6 @@
 #include "console.h"
 #include "frame_buffer.h"
 #include <math.h>
-#include <stdio.h>
 #include <assert.h>
 
 char get_wall_char(const RayHit* ray, const Texture* texture, double corrected_distance, double wall_y, int screen_x, int screen_y) {
@@ -72,7 +71,7 @@ char get_wall_char(const RayHit* ray, const Texture* texture, double corrected_d
     return WALL_SHADE_CHARS[index];
 }
 
-void renderer_render_frame(const Map* map, const Texture* texture, const Player* player, FrameBuffer* fb) {
+void renderer_render_background(const Map* map, const Texture* texture, const Player* player, FrameBuffer* fb) {
     //考虑最大视距，计算地面消失点
     double max_wall_height = (double)SCREEN_HEIGHT / MAX_VIEW_DISTANCE;
     int floor_top = (int)((SCREEN_HEIGHT / 2.0) + (max_wall_height / 2.0));
@@ -132,11 +131,8 @@ void renderer_render_frame(const Map* map, const Texture* texture, const Player*
                 fb->chars[screen_y][screen_col] = get_wall_char(&result, texture, corrected_distance, wall_y, screen_col, screen_y);
                 fb->colors[screen_y][screen_col] = COLOR_WALL;
             }
+            fb->depth[screen_col] = corrected_distance;
         }
+        fb->depth[screen_col] = MAX_VIEW_DISTANCE;
     }
-
-    //输出到屏幕
-    console_write_frame(fb);
-
-    fflush(stdout);
 }

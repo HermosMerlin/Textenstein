@@ -60,7 +60,8 @@ int main(void) {
 
         input_poll(&input);
         player_update(&player, &map);
-        renderer_render_frame(&map, &texture, &player, &framebuffer);
+        renderer_render_background(&map, &texture, &player, &framebuffer);
+        console_write_frame(&framebuffer);
 
         double end_time = time_now_seconds();
 
