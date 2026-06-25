@@ -95,11 +95,10 @@ void renderer_render_background(const Map* map, const Texture* texture, const Pl
 
     //打印墙面
     RayHit result = {0};
-    double half_fov = FOV / 2.0;
     for (int screen_col = 0; screen_col < SCREEN_WIDTH; screen_col++) {
         //window column归一化到 -1 ~ 1 范围
         double camera_x = 2.0 * (screen_col + 0.5) / SCREEN_WIDTH - 1.0;
-        double angle_offset = atan(camera_x * tan(half_fov));
+        double angle_offset = atan(camera_x * tan(FOV / 2.0));
         double angle = player->angle + angle_offset;
 
         if (angle < 0)
@@ -133,6 +132,8 @@ void renderer_render_background(const Map* map, const Texture* texture, const Pl
             }
             fb->depth[screen_col] = corrected_distance;
         }
-        fb->depth[screen_col] = MAX_VIEW_DISTANCE;
+        else {
+            fb->depth[screen_col] = MAX_VIEW_DISTANCE;
+        }
     }
 }
