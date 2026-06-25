@@ -69,18 +69,19 @@ void entity_render(EntityManager* em, Player* player, FrameBuffer* fb) {
             delta_pos = (Vec2d){em->entitylist[i].pos.x - player->x, em->entitylist[i].pos.y - player->y};
             //cpos -> camera_pos
             enemy_cpos = (Vec2d){vec2d_dot(delta_pos, camera_i), vec2d_dot(delta_pos, camera_j)};
+            double enemy_dis = vec2d_length(enemy_cpos);
 
             if (enemy_cpos.y <= 0)
                 continue;
 
-            double enemy_height = SCREEN_HEIGHT / enemy_cpos.y * ENEMY_HEIGHT;
-            double enemy_width = enemy_height;
+            int enemy_height = (int)round(SCREEN_HEIGHT / enemy_dis * ENEMY_HEIGHT);
+            int enemy_width = enemy_height;
 
             //必须严格对应renderer模块中算法
             double camera_x = enemy_cpos.x / enemy_cpos.y / tan(FOV / 2.0);
-            int center_col = (camera_x + 1.0) * SCREEN_WIDTH * 0.5 - 0.5;
-            int start_col = center_col - (enemy_width / 2.0);
-            int end_col = center_col + (enemy_width / 2.0);
+            double center_col = (camera_x + 1.0) * SCREEN_WIDTH * 0.5 - 0.5;
+            int start_col = (int)round(center_col - (enemy_width / 2.0));
+            int end_col = start_col + enemy_width - 1;
 
             start_col = fmax(0, start_col);
             end_col = fmin(SCREEN_WIDTH - 1, end_col);
@@ -89,13 +90,13 @@ void entity_render(EntityManager* em, Player* player, FrameBuffer* fb) {
                 if (fb->depth[col] <= enemy_cpos.y)
                     continue;
 
-                int row_start = (int)floor((SCREEN_HEIGHT - enemy_height) / 2.0);
-                int row_end = (int)floor((SCREEN_HEIGHT + enemy_height) / 2.0);
+                int row_bottom = (int)round(SCREEN_HEIGHT * (1.0 / enemy_cpos.y + 1.0) / 2.0);
+                int row_top = row_bottom - enemy_height;
 
-                row_start = fmax(0, row_start);
-                row_end = fmin(SCREEN_HEIGHT - 1, row_end);
+                row_top = fmax(0, row_top);
+                row_bottom = fmin(SCREEN_HEIGHT - 1, row_bottom);
 
-                for (int row = row_start; row <= row_end; row++) {
+                for (int row = row_top; row <= row_bottom; row++) {
                     fb->chars[row][col] = '$';
                     fb->colors[row][col] = COLOR_ENEMY;
                 }
