@@ -1,9 +1,18 @@
 #ifndef SHOOT_H
 #define SHOOT_H
 
-#include "ray.h"
+#include "entity.h"
+#include "player.h"
 #include "input.h"
+#include "vector.h"
 
-RayHit shoot_update(const Map* map, InputState* input, double x, double y, double angle);
+typedef struct ShootState {
+    int hit;
+    int entity_id;
+    Vec2d hit_pos;
+} ShootState;
+
+int shoot_state_init(ShootState* shoot_state);
+void shoot_update(const Map* map, ShootState* shoot_state, InputState* input, EntityManager* em, Player* player);
 
 #endif

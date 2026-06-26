@@ -86,3 +86,10 @@ RayHit ray_check_dda(const Map* map, double x, double y, double angle, double ma
     ray.distance = max_distance;
     return ray;
 }
+
+double point_to_segment_dis(Vec2d a, Vec2d b, Vec2d point) {
+    Vec2d a_b = (Vec2d){b.x - a.x, b.y - a.y};
+    Vec2d a_p = (Vec2d){point.x - a.x, point.y - a.y};
+    double dis = pow(pow(vec2d_length(a_p), 2) - pow(vec2d_dot(a_b, a_p) / vec2d_length(a_b), 2), 0.5);
+    return dis;
+}

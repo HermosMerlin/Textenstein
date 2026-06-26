@@ -2,6 +2,7 @@
 #define RAY_H
 
 #include "map.h"
+#include "vector.h"
 #include <math.h>
 
 typedef struct {
@@ -21,5 +22,7 @@ RayHit ray_check_dda(
   double x, double y,
   double angle,
   double max_distance);
+
+double point_to_segment_dis(Vec2d a, Vec2d b, Vec2d point);
 
 #endif

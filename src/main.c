@@ -63,6 +63,9 @@ int main(void) {
     FrameBuffer frame_buffer;
     frame_buffer_init(&frame_buffer);
 
+    ShootState shoot_state;
+    shoot_state_init(&shoot_state);
+
     Sleep(3000);
     console_clear();
 
@@ -70,10 +73,13 @@ int main(void) {
         double start_time = time_now_seconds();
 
         input_poll(&input);
-        player_update(&player, &map,&entity_manager);
+        shoot_update(&map, &shoot_state, &input, &entity_manager, &player);
+        player_update(&player, &map, &entity_manager);
         renderer_render_background(&map, &texture, &player, &frame_buffer);
         entity_render(&entity_manager, &player, &frame_buffer);
         console_write_frame(&frame_buffer);
+
+        printf("\nhit:%d entity_id:%d pos:(%lf,%lf)", shoot_state.hit, shoot_state.entity_id, shoot_state.hit_pos.x, shoot_state.hit_pos.y);
 
         double end_time = time_now_seconds();
 
