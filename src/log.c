@@ -1,5 +1,6 @@
 #include "log.h"
 #include <time.h>
+#include <stdio.h>
 
 static FILE* logFile = NULL;
 

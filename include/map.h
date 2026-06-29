@@ -1,7 +1,6 @@
 #ifndef MAP_H
 #define MAP_H
 #include "config.h"
-#include "log.h"
 typedef struct {
     int height;
     int width;

@@ -6,7 +6,6 @@
 #include "input.h"
 #include "player.h"
 #include "motion.h"
-#include "ray.h"
 #include "renderer.h"
 #include "console.h"
 #include "game_time.h"
