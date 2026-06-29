@@ -20,6 +20,7 @@ add_executable(textenstein
     src/shoot.c
     src/entity.c
     src/frame_buffer.c
+    src/log.c
     
 )
 
@@ -43,6 +44,7 @@ add_executable(test_ray
     src/map.c
     src/ray.c
     src/collision.c
+    src/log.c
 )
 
 target_include_directories(test_ray PRIVATE include)

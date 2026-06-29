@@ -1,6 +1,7 @@
 #ifndef MAP_H
 #define MAP_H
 #include "config.h"
+#include "log.h"
 typedef struct {
     int height;
     int width;
@@ -11,6 +12,7 @@ typedef struct {
 
 int map_load(Map* map, const char* filename);
 void map_print(const Map* map);
+void map_log(const Map* map);
 int map_is_overbound(const Map* map, int x, int y);
 int map_is_wall(const Map* map, int x, int y);
 

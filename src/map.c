@@ -60,6 +60,15 @@ void map_print(const Map* map) {
     }
 }
 
+void map_log(const Map* map) {
+    for (int i = 0; i < map->height; i++) {
+        for (int j = 0; j < map->width; j++) {
+            log_save("%c", map->tiles[i][j]);
+        }
+        log_save("\n");
+    }
+}
+
 int map_is_overbound(const Map* map, int x, int y) {
     if (x < 0 || x >= map->width || y < 0 || y >= map->height)
         return 1;

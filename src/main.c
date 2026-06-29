@@ -14,38 +14,39 @@
 #include "shoot.h"
 #include "frame_buffer.h"
 #include "entity.h"
+#include "log.h"
 
 int main(void) {
+    log_init("../log.txt");
+
     console_init(SCREEN_WIDTH, SCREEN_HEIGHT);
-    printf("Textenstein Loading...\n");
 
     Map map;
-
     if (map_load(&map, "../assets/complex_map_e.txt")) {
-        printf("Loaded map\n");
-        map_print(&map);
+        log_save("Loaded map\n");
+        map_log(&map);
     }
     else {
-        printf("Failed to load map\n");
+        log_save("Failed to load map\n");
         return 1;
     }
 
     EntityManager entity_manager;
     entity_manager_init(&entity_manager);
     if (entity_load(&map, &entity_manager)) {
-        printf("Loaded entities: %d\n", entity_manager.count);
+        log_save("Loaded entities: %d\n", entity_manager.count);
     }
     else {
-        printf("Failed to load entities\n");
+        log_save("Failed to load entities\n");
         return 1;
     }
 
     Texture texture;
     if (wall_texture_load(&texture, "../assets/wall_brick_16.txt")) {
-        printf("Loaded wall texture\n");
+        log_save("Loaded wall texture\n");
     }
     else {
-        printf("Failed to load wall texture\n");
+        log_save("Failed to load wall texture\n");
         return 1;
     }
 
@@ -54,9 +55,9 @@ int main(void) {
     Player player;
     motion_init(&motion, &input);
     if (player_init(&player, &motion, &map, &entity_manager, map.player_init_x, map.player_init_y) == 1)
-        printf("Player created\n");
+        log_save("Player created\n");
     else {
-        printf("Player failed to create\n");
+        log_save("Player failed to create\n");
         exit(1);
     }
 
@@ -66,6 +67,7 @@ int main(void) {
     ShootState shoot_state;
     shoot_state_init(&shoot_state);
 
+    printf("Game will start...");
     Sleep(3000);
     console_clear();
 
@@ -94,5 +96,6 @@ int main(void) {
     }
 
     console_show_cursor();
+    log_close();
     return 0;
 }
