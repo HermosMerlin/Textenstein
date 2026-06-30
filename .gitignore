@@ -4,6 +4,7 @@ build/
 AGENTS.md
 agent.md
 agents.md
+log.txt
 .cache/
 .vscode/
 .VSCodeCounter
