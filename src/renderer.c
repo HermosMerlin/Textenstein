@@ -1,7 +1,6 @@
 #include "renderer.h"
 #include "config.h"
 #include "ray.h"
-#include "console.h"
 #include "frame_buffer.h"
 #include <math.h>
 #include <assert.h>
